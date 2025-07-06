@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+Flask-SQLAlchemy
+psycopg2-binary
+openai==0.28
+python-dotenv
