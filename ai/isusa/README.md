@@ -21,8 +21,6 @@ The application consists of three main components:
 
 ## Diagram
 
-```mermaid
-graph TD;
     A[User] -->|Interacts with| B[Front-end (React)]
     B -->|Sends requests to| C[Back-end (Flask)]
     C -->|Requests advice from| D[OpenAI API]
