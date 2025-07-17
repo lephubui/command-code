@@ -1,6 +1,6 @@
 /*******************************************************************************************************************************************************************************
- * Array Manipulation Challenge: Get Elimination Order in String
- * Problem Statement:
+Array Manipulation Challenge: Get Elimination Order in String
+Problem Statement:
 You are given a string s consisting only of uppercase English letters ('A' to 'Z'). 
 Your task is to perform a sequence of elimination rounds on the string until it becomes empty, following these rules:
 
@@ -20,6 +20,12 @@ In each round:
 4. If a single character remains at the end of any round, remove it in the next round.
 
 Return a list of all characters removed, in the exact order they were eliminated.
+
+Input Constraints:
+The input is a string s of uppercase letters only:
+'A' to 'Z'
+
+Length of string n satisfies, which is 1 ≤ n ≤ 100.
 
 Example 1: 
 Input: "ABCD"
@@ -74,9 +80,8 @@ vector<char> solution(string s) {
                 new_str += pair.first;
             }
         }
-        
-        
-        // Rememeber if n is odd, then don't forget to add the last character
+
+        // Remember if n is odd, then don't forget to add the last character
         if (s.length() % 2 != 0 and s.length() > 1) {
             new_str += s[s.length()-1];
         }
