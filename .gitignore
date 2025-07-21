@@ -1,0 +1,27 @@
+# Ignore Python cache files
+*.py[cod]
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# Ignore virtual environment directories
+venv/
+# Ignore build directories
+build/
+dist/
+# Ignore Python egg files
+*.egg-info/
+# Ignore environment variables
+.env
+.flaskenv
+# Ignore coverage reports
+.coverage
+# Ignore logs
+*.log
+# Ignore IDE specific files
+.idea/
+# Ignore macOS specific files
+.DS_Store
+# Ignore Windows specific files
+Thumbs.db
+# Ignore xflowbot virtual environment directories
+xflowbot/*
+xflowbotvirtualenv/*
