@@ -23,5 +23,4 @@ dist/
 # Ignore Windows specific files
 Thumbs.db
 # Ignore xflowbot virtual environment directories
-xflowbot/*
-xflowbotvirtualenv/*
+xflowbot/xflowbotvirtualenv/*
