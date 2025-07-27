@@ -2,10 +2,7 @@
 
 This project contains a set of raw socket-based traffic flooding tools written in C++ for network testing and simulation. The tools include:
 
-- `arp_flood.cpp`: Sends ARP request floods with randomized source MACs.
-- `snmp_flood.cpp`: Sends SNMP GET requests in a continuous loop to a target IP.
-- `lldp_flood.cpp`: (Assuming this file is similar) Sends crafted LLDP packets to flood the network with discovery frames.
-- `send_packets.cpp`: (Optional) General packet sender using raw sockets.
+
 
 ⚠️ **WARNING**: These tools generate high volumes of network traffic and should only be used in a controlled lab environment or with proper authorization. Misuse on production or public networks can result in serious consequences.
 
