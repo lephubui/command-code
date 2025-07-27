@@ -24,3 +24,6 @@ dist/
 Thumbs.db
 # Ignore xflowbot virtual environment directories
 xflowbot/xflowbotvirtualenv/*
+
+# Ignore syslog files
+syslog/config.h
