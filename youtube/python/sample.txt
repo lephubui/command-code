@@ -1,0 +1,3 @@
+Hello world! This is a sample text file for testing the word counter.
+It has some repeated word: hello, world, sample, text, command, code.
+Hello again!Let's count the words in this file.
