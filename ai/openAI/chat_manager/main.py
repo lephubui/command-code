@@ -36,3 +36,14 @@ if chat:
     print("Chat successfully created!")
 else:
     print("Failed to create chat.")
+
+# Retrieve the chat history using the get_conversation method
+conversation = manager.get_conversation(user_id, chat_id)
+
+# Print the chat ID
+print(chat_id)
+
+# Iterate over the conversation and print each message's role and content
+for history in conversation:
+    print(history["role"])
+    print(history["content"])
