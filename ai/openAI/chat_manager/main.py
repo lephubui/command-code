@@ -47,3 +47,18 @@ print(chat_id)
 for history in conversation:
     print(history["role"])
     print(history["content"])
+
+# Add messages to the chat using the add_message method
+# - Add a user message of your choice
+# - Add an assistant response to the chat that matches the user's message
+manager.add_message(user_id, chat_id, "user", "what is your hours supporting on the weekend?")
+manager.add_message(user_id, chat_id, "assistant", "Sorry we don't support on the weekend.")
+# Get chat history
+conversation = manager.get_conversation(user_id, chat_id)
+
+# Print results
+print(f"Chat ID: {chat_id}\n")
+for message in conversation:
+    if message['role'] != 'system':  # Skip the system prompt
+        print(f"Role: {message['role']}") 
+        print(f"Message:\n{message['content']}\n")

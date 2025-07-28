@@ -21,7 +21,17 @@ class ChatManager:
         """Retrieve the chat using user_id and chat_id"""
         return self.chat_sessions.get(user_id, {}).get(chat_id)
     
-        # Define the get_conversation method
+    # Define the add_message method
+    # - Parameters: user_id, chat_id, role, content
+    # - Retrieve the chat using get_chat method
+    # - If chat exists, append the message with role and content to the chat's message list
+    def add_message(self, user_id, chat_id, role, content):
+        if chat := self.get_chat(user_id, chat_id):
+            chat["messages"].append({"role": role, "content": content}) 
+        else:
+            print(f"Chat not found for user {user_id} and chat {chat_id}. Message not added.")
+
+    # Define the get_conversation method
     # - Parameters: user_id, chat_id
     # - Retrieve the chat using get_chat method
     # - If chat exists:
