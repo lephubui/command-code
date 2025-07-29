@@ -62,3 +62,23 @@ for message in conversation:
     if message['role'] != 'system':  # Skip the system prompt
         print(f"Role: {message['role']}") 
         print(f"Message:\n{message['content']}\n")
+
+# Add some messages
+messages = [
+    {"role": "user", "content": "Hello!"},
+    {"role": "assistant", "content": "Hi there!"},
+    {"role": "user", "content": "How are you?"},
+    {"role": "assistant", "content": "I'm just a program, but I'm here to help!"}
+]
+
+# Use a loop to add all messages to the chat using manager.add_message
+for each_message in messages:
+    manager.add_message(user_id, chat_id, each_message['role'], each_message['content'])
+    
+# Retrieve the full conversation using manager.get_conversation
+conversation = manager.get_conversation(user_id, chat_id)
+
+# Print each message's role and content from the conversation
+for message in conversation:
+    print(f"Role: {message['role']}")
+    print(f"Message:\n{message['content']}\n")
