@@ -27,3 +27,36 @@ class ChatService:
         chat_id = str(uuid.uuid4())
         self.chat_manager.create_chat(user_id, chat_id, self.system_prompt)
         return chat_id
+
+    # Define the get_chat method
+    # - Parameters: user_id, chat_id, and message
+    # - Use chat_manager to retrieve the chat session
+    def process_message(self, user_id: str, chat_id: str, message: str) -> str:
+        """Process a user message and get AI response."""
+        chat = self.chat_manager.get_chat(user_id, chat_id)
+        if not chat:
+            raise ValueError("Chat not found")
+        
+        # Add user message
+        self.chat_manager.add_message(user_id, chat_id, "user", message)
+        
+        try:
+            # Get AI response
+            conversation = self.chat_manager.get_conversation(user_id, chat_id)
+            
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4",
+                messages=conversation,
+                temperature=0.7,
+                max_tokens=500
+            )
+            
+            ai_message = response.choices[0].message.content
+            
+            # Add AI response to chat history
+            self.chat_manager.add_message(user_id, chat_id, "assistant", ai_message)
+            
+            return ai_message
+            
+        except Exception as e:
+            raise RuntimeError(f"Error getting AI response: {str(e)}")
