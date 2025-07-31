@@ -37,7 +37,7 @@ def search_specific_words(file_path, search_words):
 if __name__ == "__main__":
     # Passing the file path in the terminal when exucting the program/script
     if len(sys.argv) < 2:
-        print("Usage: python3 word_count.py <file_path> [top_n | --search word1 word2 ...]")
+        print("Usage: python3 word_counter.py <file_path> [top_n | --search word1 word2 ...]")
         sys.exit(1)
     
     # Check if search mode is requested

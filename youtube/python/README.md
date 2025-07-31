@@ -13,6 +13,6 @@ A Python implementation of a word counter utility with comprehensive unit testin
 This project demonstrates a robust word counting algorithm that can process text files, strings, and various input formats while maintaining accuracy and performance.
 
 ## How to run
- - python3 word_counter.py
+ - python3 word_counter.py <file_path> [top_n | --search word1 word2 ...]
  - python3 test_word_counter.py
 
