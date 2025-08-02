@@ -27,3 +27,30 @@ class ChatController:
             'chat_id': chat_id,
             'message': 'Chat created successfully'
         }
+
+# Define the send_message method
+    def send_message(self, chat_id, user_message):
+        """Handle message sending request."""
+        # Check if 'user_id' exists in the test_session dictionary
+        # If it doesn't exist, return an error message indicating the session
+        # has expired with a status code of 401
+        user_id = self.test_session.get('user_id')
+        
+        if not user_id:
+            return {'error': 'Session expired'}, 401
+                
+        # Ensure both chat_id and user_message are provided and not empty
+        # If either is missing, return an error message with a status code of 400
+        if not chat_id or not user_message:
+            return {'error': 'Missing chat_id or message'}, 400
+
+        # Process the message using chat_service within a try-except block
+        # Catch ValueError and return an error message with a status code of 404.
+        # Catch RuntimeError and return an error message with a status code of 500.
+        try:
+            ai_response = self.chat_service.process_message(user_id, chat_id, user_message)
+            return {'message': ai_response}
+        except ValueError as e:
+            return {'error': str(e)}, 404
+        except RuntimeError as e:
+            return {'error': str(e)}, 500
