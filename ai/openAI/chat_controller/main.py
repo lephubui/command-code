@@ -16,3 +16,14 @@ else: # If there is no error:
     # Extract chat_id from the response
     chat_id = chat_response['chat_id']
     print(chat_id)
+
+    # Send the user message using the send_message method and retrieve the AI's response
+    response = chat_controller.send_message(chat_id, "What are the top service?")
+
+    # Handle message response
+    # If 'error' is in the response, print the error message
+    # Otherwise, print the AI's response
+    if 'error' in response:
+        print(f"Error: {response['error']}")
+    else:
+        print(f"AI Response: {response['message']}")
