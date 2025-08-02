@@ -65,7 +65,7 @@ def process_log(file_path, level_log):
 if __name__ == "__main__":
     # Passing the file path in the terminal when exucting the program/script
     if len(sys.argv) < 2:
-        print("Usage: python3 word_counter.py <file_path> [top_n | --search word1 word2 ... [--level_log LEVEL]")
+        print("Usage: python3 word_counter.py <file_path> [top_n | --search word1 word2 ... | --level_log LEVEL]")
         sys.exit(1)
     
     # Get the file path
