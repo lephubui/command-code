@@ -1,0 +1,93 @@
+{
+  "personal": {
+    "name": "Le Phu Bui",
+    "title": "Software Engineer",
+    "email": "leebuiph@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/lephubui"
+  },
+  "navigation": [
+    { "href": "#summary", "text": "Summary" },
+    { "href": "#skills", "text": "Skills" },
+    { "href": "#experience", "text": "Experience" },
+    { "href": "#education", "text": "Education" }
+  ],
+  "summary": "Software Engineering with a robust background in software development and cybersecurity innovation. Specializes in designing scalable, cloud security, real-time embedded system, and real-time distributed system. Proven ability in leveraging interpreted and compiled programming languages to optimize code for software network systems. Demonstrates a commitment to cross-functional collaboration and delivering high-quality, resilient software.",
+  "skills": [
+    {
+      "category": "Programming Languages",
+      "items": ["C++", "C", "Python", "Java", "NodeJS", "C#", "Go", "SQL"]
+    },
+    {
+      "category": "Data Formats & Databases",
+      "items": ["NoSQL", "JSON", "XML", "MongoDB Atlas", "PostgreSQL", "Redis"]
+    },
+    {
+      "category": "Networking & Security Tools",
+      "items": ["OS Linux", "Wireshark", "Static Analysis"]
+    },
+    {
+      "category": "Cloud & DevOps",
+      "items": ["AWS", "MS Azure Cloud", "Docker Container", "CI/CD pipelines"]
+    },
+    {
+      "category": "Software & Tools",
+      "items": ["Git", "Spring framework", "SVN", "Atlassian Jira", "Python Flask", "Postman", "OpenAI API"]
+    }
+  ],
+  "experience": [
+    {
+      "title": "Software Engineer",
+      "company": "Schweitzer Engineering Laboratories, Inc",
+      "period": "Oct 2020 - Present",
+      "location": "Pullman, WA",
+      "description": "Conduct research and development within the division to advance networking protocols for Layer 2 Managed Ethernet Switch and Ethernet Security Gateway firmware, ensuring adherence to performance, reliability, and safety standards.",
+      "responsibilities": [
+        "Design C++ APIs to stream configuration changes and notify the PostgreSQL database in real time, such as logging and settings.",
+        "Develop and maintain system daemons for managing device state, configuration, and operational data in devices.",
+        "Research and implement advanced features for network protocol: IP, UDP, TCP, SNMP, PTP, LDAP, etc.",
+        "Perform rigorous testing methods to support multi-level security requirement. UT, integration test, and functional test.",
+        "Develop and maintaining skills to support to interns and new associate software engineers, enhancing team capability in using critical networking and security tools.",
+        "Maintain comprehensive design and test documentation, including system requirement specifications, test case specifications, and functional tests, to support operational excellence."
+      ]
+    },
+    {
+      "title": "Software Engineer II",
+      "company": "F5 Networks",
+      "period": "Oct 2017 - Jan 2019",
+      "location": "Seattle, WA",
+      "description": "Optimized system performance to support the template development team while ensuring deployment solutions compiled with enterprise security, standards.",
+      "responsibilities": [
+        "Developed deployment scripts using Python to automate the provisioning of F5 BIG-IP Virtual Edition across multiple cloud providers, aligning with cloud-native security practices.",
+        "Built and containerized scalable configurations using Docker, integrating CI/CD pipeline tools to streamline secure and efficient deployments.",
+        "Led full-stack development for a template scheduling test system, thereby enhancing the efficiency, robustness, and security compliance of F5 BIG-IP Virtual Editions."
+      ]
+    },
+    {
+      "title": "Software Engineer",
+      "company": "Tata Consultancy Service Limited",
+      "period": "Aug 2016 - Oct 2017",
+      "location": "Redmond, WA",
+      "description": "IoT team - Business Solution Unit.",
+      "responsibilities": [
+        "Designed and implemented RESTFul API endpoints using Spring Boot.",
+        "Built interactive web interfaces with JavaScript, jQuery, and Bootstrap.",
+        "Diagnosed and resolved URL-related errors upon the customer's queries.",
+        "Developed cloud-based web applications on IBM Bluemix, Splunk, and ServiceNow.",
+        "Managed version control with SVN to streamline team collaboration and code integration."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "M.S. Computer Science",
+      "university": "University of Idaho"
+    },
+    {
+      "degree": "B.S. Computer Science and System",
+      "university": "University of Washington"
+    }
+  ],
+  "footer": {
+    "copyright": "© 2025 Le Phu Bui"
+  }
+}
