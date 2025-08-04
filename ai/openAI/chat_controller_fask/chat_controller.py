@@ -24,7 +24,7 @@ class ChatController:
             'message': 'Chat created successfully'
         }
     
-    def send_message(self, chat_id, user_message):
+    def send_message(self):
         """Handle message sending request."""
         user_id = session.get('user_id')
         if not user_id:
