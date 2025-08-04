@@ -65,7 +65,7 @@ header::before {
 .contact-info {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
     margin-bottom: 2rem;
 }
@@ -78,6 +78,8 @@ header::before {
     border-radius: 25px;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .contact-info a:hover {
@@ -295,6 +297,78 @@ section:nth-child(even) {
     font-weight: 500;
 }
 
+/* AI Contents */
+.ai-contents-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.ai-description {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+.ai-platforms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+.ai-platform-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.ai-platform-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-color: #3498db;
+}
+
+.platform-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.platform-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.platform-handle {
+    font-size: 0.9rem;
+    color: #3498db;
+    font-weight: 500;
+    display: block;
+}
+
+.platform-break {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    margin: 1rem 0;
+    grid-column: 1 / -1;
+}
+
 /* Footer */
 footer {
     background: #2c3e50;
@@ -343,7 +417,12 @@ footer {
     .contact-info {
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        gap: 0.8rem;
+    }
+
+    .contact-info a {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
     }
 
     nav ul {
@@ -362,6 +441,11 @@ footer {
     .job {
         padding: 1.5rem;
     }
+
+    .ai-platforms {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -377,7 +461,51 @@ footer {
         font-size: 1.8rem;
     }
 
+    .contact-info {
+        gap: 0.6rem;
+    }
+
+    .contact-info a {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+
     .skill-category {
         padding: 1.5rem;
+    }
+
+    .ai-platform-link {
+        padding: 1.5rem;
+    }
+
+    .platform-icon {
+        font-size: 2.5rem;
+    }
+
+    .platform-break {
+        margin: 0.8rem 0;
+    }
+}
+
+@media (max-width: 380px) {
+    .contact-info a {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .header-content h1 {
+        font-size: 1.6rem;
+    }
+
+    .ai-platform-link {
+        padding: 1.2rem;
+    }
+
+    .platform-icon {
+        font-size: 2rem;
+    }
+
+    .platform-break {
+        margin: 0.6rem 0;
     }
 }

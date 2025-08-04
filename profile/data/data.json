@@ -3,13 +3,40 @@
     "name": "Le Phu Bui",
     "title": "Software Engineer",
     "email": "leebuiph@gmail.com",
-    "linkedin": "https://www.linkedin.com/in/lephubui"
+    "socialMedia": [
+      {
+        "platform": "LinkedIn",
+        "url": "https://www.linkedin.com/in/lephubui",
+        "icon": "💼"
+      },
+      {
+        "platform": "GitHub",
+        "url": "https://github.com/lephubui",
+        "icon": "🐙"
+      },
+      {
+        "platform": "YouTube",
+        "url": "https://www.youtube.com/@CommandnCode",
+        "icon": "📺"
+      },
+      {
+        "platform": "Twitter/X",
+        "url": "https://x.com/lephubui",
+        "icon": "🐦"
+      },
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/lephubui/",
+        "icon": "📸"
+      }
+    ]
   },
   "navigation": [
     { "href": "#summary", "text": "Summary" },
     { "href": "#skills", "text": "Skills" },
     { "href": "#experience", "text": "Experience" },
-    { "href": "#education", "text": "Education" }
+    { "href": "#education", "text": "Education" },
+    { "href": "#ai-contents", "text": "AI Contents" }
   ],
   "summary": "Software Engineering with a robust background in software development and cybersecurity innovation. Specializes in designing scalable, cloud security, real-time embedded system, and real-time distributed system. Proven ability in leveraging interpreted and compiled programming languages to optimize code for software network systems. Demonstrates a commitment to cross-functional collaboration and delivering high-quality, resilient software.",
   "skills": [
@@ -87,6 +114,26 @@
       "university": "University of Washington"
     }
   ],
+  "aiContents": {
+    "description": "Use AI to leverage my knowledge about CS daily",
+    "platforms": [
+      {
+        "platform": "Facebook",
+        "url": "https://www.facebook.com/commandncode/",
+        "icon": "📘"
+      },
+      {
+        "platform": "Instagram",
+        "url": "https://www.instagram.com/commandncode/",
+        "icon": "📸"
+      },
+      {
+        "platform": "TikTok",
+        "url": "https://www.tiktok.com/@commandncode",
+        "icon": "🎵"
+      }
+    ]
+  },
   "footer": {
     "copyright": "© 2025 Le Phu Bui"
   }

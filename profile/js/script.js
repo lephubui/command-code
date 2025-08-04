@@ -26,12 +26,14 @@ function populateContent() {
     document.getElementById('header-name').textContent = portfolioData.personal.name;
     document.getElementById('header-title').textContent = portfolioData.personal.title;
     
-    // Populate contact info
+    // Populate contact info with email and social media
     const contactInfo = document.getElementById('contact-info');
-    contactInfo.innerHTML = `
-        <a href="mailto:${portfolioData.personal.email}">📧 ${portfolioData.personal.email}</a>
-        <a href="${portfolioData.personal.linkedin}" target="_blank">💼 LinkedIn</a>
-    `;
+    const emailLink = `<a href="mailto:${portfolioData.personal.email}">📧 ${portfolioData.personal.email}</a>`;
+    const socialLinks = portfolioData.personal.socialMedia.map(social => 
+        `<a href="${social.url}" target="_blank" rel="noopener noreferrer">${social.icon} ${social.platform}</a>`
+    ).join('');
+    
+    contactInfo.innerHTML = emailLink + socialLinks;
 
     // Populate navigation
     const navigation = document.getElementById('navigation');
@@ -84,6 +86,32 @@ function populateContent() {
         </div>
     `).join('');
 
+    // Populate AI Contents with break lines between platforms
+    const aiContentsSection = document.getElementById('ai-contents-section');
+    const platformLinks = portfolioData.aiContents.platforms.map((platform, index) => {
+        const link = `
+            <a href="${platform.url}" target="_blank" rel="noopener noreferrer" class="ai-platform-link">
+                <span class="platform-icon">${platform.icon}</span>
+                <span class="platform-name">${platform.platform}</span>
+                <span class="platform-handle">Command & Code</span>
+            </a>
+        `;
+        
+        // Add break line after each platform except the last one
+        return index < portfolioData.aiContents.platforms.length - 1 
+            ? link + '<div class="platform-break"></div>' 
+            : link;
+    }).join('');
+
+    aiContentsSection.innerHTML = `
+        <div class="ai-contents-content">
+            <p class="ai-description">${portfolioData.aiContents.description}</p>
+            <div class="ai-platforms">
+                ${platformLinks}
+            </div>
+        </div>
+    `;
+
     // Populate footer
     document.getElementById('footer-text').textContent = portfolioData.footer.copyright;
 
@@ -132,8 +160,8 @@ function initializeInteractions() {
         });
     }, observerOptions);
 
-    // Observe all skill categories and job items
-    document.querySelectorAll('.skill-category, .job, .education-item').forEach(el => {
+    // Observe all skill categories, job items, education items, and AI platform links
+    document.querySelectorAll('.skill-category, .job, .education-item, .ai-platform-link').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
