@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-<!-- Head section... -->
- <head>
+<head>
     <title>Customer Service Chat</title>
 </head>
 <body>
@@ -9,5 +8,58 @@
         <h1>Welcome to Our Customer Service</h1>
         <p>How can we help you today?</p>
     </div>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input type="text" id="message-input" placeholder="Type your message...">
+            </div>
+            <button onclick="sendMessage()">Send</button>
+            <button id="new-chat-btn" onclick="startNewChat()">New Chat</button>
+        </div>
+    </div>
+
+    <script>
+        // Get references to the messages container and message input field
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('message-input');
+        // Define the appendMessage function
+        function appendMessage(role, content) {
+            // Create a new div element for the message
+            const messageDiv = document.createElement('div');
+            
+            // Assign a class to the message based on its role (user or assistant)
+            messageDiv.className = `message ${role}`;
+            
+            // Set the text content of the message
+            messageDiv.textContent = content;
+            
+            // Append the message to the messages container
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll the messages container to the bottom to show the latest message
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Define the sendMessage function
+        function sendMessage() {
+            // Retrieve and trim the input value
+            const message = messageInput.value.trim();
+            
+            // If the message is empty, do not proceed
+            if (!message) return;
+
+            // Add user message to display
+            appendMessage('user', message);
+
+            // Clear the input field after sending the message
+            messageInput.value = '';
+
+            // For now, just echo the message back
+            setTimeout(() => {
+                appendMessage('assistant', `You said: ${message}`);
+            }, 500);
+        }
+    </script>
 </body>
 </html>
