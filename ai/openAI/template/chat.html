@@ -24,9 +24,10 @@
         const messagesContainer = document.getElementById('messages');
         const messageInput = document.getElementById('message-input');
 
-        // Start a chat automatically when the page loads
+        // Add an event listener for 'DOMContentLoaded' that calls startNewChat
         document.addEventListener('DOMContentLoaded', startNewChat);
-
+        
+        // Define the startNewChat function that clears the chat history
         function startNewChat() {
             // Clear the chat history
             messagesContainer.innerHTML = '';
@@ -67,12 +68,8 @@
                 appendMessage('assistant', `You said: ${message}`);
             }, 500);
         }
-        
-        // Add an event listener to the messageInput that:
-        // 1. Listens for the 'keypress' event
-        // 2. Checks if the Enter key was pressed
-        // 3. Prevents the default behavior (form submission)
-        // 4. Calls the sendMessage function
+
+        // Handle Enter key
         messageInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 // Prevent the default form submission behavior
@@ -80,8 +77,7 @@
                 // Send the message when Enter key is pressed
                 sendMessage();
             }
-        });        
-        
+        });
     </script>
 </body>
 </html>
