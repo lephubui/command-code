@@ -1,0 +1,20 @@
+/* Add styles for html and body to ensure they take full height with no margin or padding */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Style the body as a flex container with column direction and set a modern font */
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+}
+
+/* Style the header with center alignment, padding, and a light background color */
+.header {
+    text-align: center;
+    padding: 10px;
+    background-color: bisque;
+}
