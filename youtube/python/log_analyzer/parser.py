@@ -1,26 +1,29 @@
-# Parser to analyze log files from logs.text
 import re
+from dataclasses import dataclass
 
-def parse_log_file(file_path):
-    """
-    Parses a log file and returns a list of dictionaries with log details.
-    
-    Args:
-        file_path (str): Path to the log file.
-        
-    Returns:
-        list: A list of dictionaries containing parsed log entries.
-    """
-    log_entries = []
-    
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                # Example regex pattern to match log entries
-                match = re.match(r'(?P<timestamp>\S+) (?P<level>\S+) (?P<message>.*)', line)
-                if match:
-                    log_entries.append(match.groupdict())
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
-    
-    return log_entries
+@dataclass
+class LogEntry:
+    timestamp: str
+    loglevel: str
+
+class LogParser:
+    def read_file(file_path):
+        """Define how to read a file"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                return file.readlines()
+        except (FileNotFoundError, PermissionError) as err:
+            print(f"Error accessing file: {err}")
+            raise # Raise to handle in caller
+
+    def extract_words(text):
+        """Extract words from text using regex"""
+        return re.findall(r'\b\w+\b', text.lower())
+
+    def parse_log_entry(line):
+        """Parse timestamp and log level from a log line."""
+        match = re.match(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}, \d{3})\s+(\w+)', line)
+        if match:
+            return LogEntry(match.group(1), match.group(2).upper())
+        else:
+            return None
