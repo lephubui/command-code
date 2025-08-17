@@ -1,0 +1,36 @@
+body {
+  background-color: #000;
+  color: #00FF41;
+  font-family: "Courier New", monospace;
+}
+h2, h3 {
+  color: #00FF41;
+}
+button {
+  background-color: #111;
+  color: #00FF41;
+  border: 1px solid #00FF41;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  width: 100%;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #00FF41;
+  color: #000;
+}
+.panel {
+  border: 1px solid #00FF41;
+  margin: 6px;
+  padding: 8px;
+}
+
+@keyframes pulseFade {
+  0%   { color: #FFFFFF; }
+  40%  { color: var(--pulseColor); }
+  100% { color: #FFFFFF; }
+}
+
+.pulse {
+  animation: pulseFade 1s forwards;
+}
