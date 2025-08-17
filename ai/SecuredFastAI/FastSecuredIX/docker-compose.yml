@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  # ---------- Object Store -------------
+  aistore:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Console UI
+    volumes:
+      - ./aistore/data:/data
+
+  # ---------- FastAPI Backend ----------
+  backend:
+    build: ./backend
+    depends_on:
+      - aistore
+    environment:
+      - AIS_ENDPOINT=http://aistore:9000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - PORT=2892
+    ports:
+      - "2892:2892"
+    volumes:
+      - ./backend:/app
+
+  # ---------- ML (PyTorch) Job ---------
+  mljob:
+    build: ./ml_jobs
+    depends_on:
+      - aistore
+    environment:
+      - AIS_ENDPOINT=http://aistore:9000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+    volumes:
+      - ./ml_jobs:/app
+
+  # ---------- React Dashboard ----------
+  dashboard:
+    build: ./dashboard
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./dashboard:/app
