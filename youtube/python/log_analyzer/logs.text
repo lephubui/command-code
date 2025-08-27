@@ -1,0 +1,8 @@
+2025-07-30 21:15:01,234 INFO  [main] com.example.Application - Application started successfully.
+2025-07-30 21:15:05,789 DEBUG [http-worker-1] com.example.UserService - User 'john.doe' requested data.
+2025-07-30 21:15:10,112 WARN  [scheduler-thread-0] com.example.ResourceMonitor - Disk usage exceeding 85% on /var/log. Consider cleanup.
+2025-07-30 21:15:15,456 ERROR [data-processor-2] com.example.DataProcessor - Failed to process record ID: 12345. Reason: NullPointerException in data parsing.
+2025-07-30 21:15:20,901 INFO  [main] com.example.Application - Processing complete.
+2025-07-30 21:15:25,321 WARN  [api-gateway] com.example.ExternalService - External API call to 'paymentservice' returned with HTTP 503 (Service Unavailable). Retrying...
+2025-07-30 21:15:30,678 ERROR [database-connection] com.example.DatabaseManager - Database connection failed for 'production_db'. Error: Connection refused.
+2025-07-30 21:15:35,000 DEBUG [background-task] com.example.CleanupService - Initiating daily log cleanup.
