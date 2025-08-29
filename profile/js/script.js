@@ -57,6 +57,39 @@ function populateContent() {
         </div>
     `).join('');
 
+    // Populate projects
+    const projectsGrid = document.getElementById('projects-grid');
+    projectsGrid.innerHTML = portfolioData.projects.map(project => `
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-icon">${project.icon}</div>
+                <div class="project-title-section">
+                    <h3 class="project-title">${project.title}</h3>
+                    <div class="project-status ${project.status.toLowerCase()}">${project.status}</div>
+                </div>
+            </div>
+            <p class="project-description">${project.description}</p>
+            <div class="project-technologies">
+                ${project.technologies.map(tech => 
+                    `<span class="tech-tag">${tech}</span>`
+                ).join('')}
+            </div>
+            <div class="project-highlights">
+                <h4>Key Features:</h4>
+                <ul>
+                    ${project.highlights.map(highlight => 
+                        `<li>${highlight}</li>`
+                    ).join('')}
+                </ul>
+            </div>
+            <div class="project-actions">
+                <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-link">
+                    🔗 Visit Project
+                </a>
+            </div>
+        </div>
+    `).join('');
+
     // Populate experience
     const experienceTimeline = document.getElementById('experience-timeline');
     experienceTimeline.innerHTML = portfolioData.experience.map(job => `
@@ -160,8 +193,8 @@ function initializeInteractions() {
         });
     }, observerOptions);
 
-    // Observe all skill categories, job items, education items, and AI platform links
-    document.querySelectorAll('.skill-category, .job, .education-item, .ai-platform-link').forEach(el => {
+    // Observe all skill categories, job items, education items, project cards, and AI platform links
+    document.querySelectorAll('.skill-category, .job, .education-item, .project-card, .ai-platform-link').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';

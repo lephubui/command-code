@@ -61,6 +61,21 @@
       "items": ["Git", "Spring framework", "SVN", "Atlassian Jira", "Python Flask", "Postman", "OpenAI API"]
     }
   ],
+    "projects": [
+    {
+      "title": "Command & Code Labs",
+      "description": "A comprehensive development platform showcasing innovative software engineering projects, tutorials, and interactive coding experiences. Features real-world applications, best practices demonstrations, and educational content for developers.",
+      "url": "https://ccdev.app",
+      "technologies": ["Web Development", "Cloud Architecture", "Educational Technology", "Interactive Learning"],
+      "highlights": [
+        "Interactive dummy network security concepts",
+        "Real-world software engineering demonstrations",
+        "Educational content for everyone at all levels"
+      ],
+      "status": "Live",
+      "icon": "🚀"
+    }
+  ],
   "experience": [
     {
       "title": "Software Engineer",
