@@ -1,5 +1,9 @@
 import sys
 
+from counter import WordCounter
+from parser import LogParser, LogEntry
+from processor import LogProcessor
+
 class CLIHandler:
     @staticmethod
     def print_top_words(result):
@@ -26,18 +30,16 @@ class CLIHandler:
     @staticmethod
     def parse_args_and_run(lines):
         """Use to check and proceed the user cli input"""
-        args = sys.argv
+        args = sys.argv[2:]  # Skip script name and file_path
         
-        if len(args) < 2:
+        if len(sys.argv) < 2:
             print("Usage: python3 main.py <file_path> [top_n | --search word1 word2 ... | --level_log LEVEL]")
             sys.exit(1)
 
-        args = sys.argv[1:] # Ignore script name, file_path is args[0]
-
-        if len(args) >= 2 and args[1] == '--search':
+        if len(args) >= 1 and args[0] == '--search':
             search_words = []
             log_level = None
-            i = 2
+            i = 1
             while i < len(args):
                 if args[i] == '--level_log':
                     if i + 1 < len(args):
@@ -60,7 +62,7 @@ class CLIHandler:
             
         else:
             try:
-                top_n = int(args[1]) if len(args) >= 2 else 5
+                top_n = int(args[0]) if len(args) >= 1 else 5
                 if top_n <= 0:
                     print("Top N must be a positive integer")
                     sys.exit(1)

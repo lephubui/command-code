@@ -15,11 +15,15 @@ class WordCounter:
     def search_specific_words(self, search_words, log_level=None):
         """Search and count specific words, optionally filtered by log level."""
         word_counts = Counter()
+        
         for line in self.lines:
             entry = LogParser.parse_log_entry(line)
-            if log_level and (not entry or entry.level.lower() != log_level.lower()):
+            if log_level and (not entry or entry.loglevel.lower() != log_level.lower()):
                 continue
+            
             words = LogParser.extract_words(line)
             word_counts.update(words)
-            return [(word.lower(), word_counts.get(word.lower(), 0)) for word in search_words]
+        
+        # Return counts for the requested search words
+        return [(word.lower(), word_counts.get(word.lower(), 0)) for word in search_words]
 
