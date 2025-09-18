@@ -34,6 +34,7 @@
   "navigation": [
     { "href": "#summary", "text": "Summary" },
     { "href": "#skills", "text": "Skills" },
+    { "href": "#projects", "text": "Projects" },
     { "href": "#experience", "text": "Experience" },
     { "href": "#education", "text": "Education" },
     { "href": "#ai-contents", "text": "AI Contents" }
@@ -61,19 +62,22 @@
       "items": ["Git", "Spring framework", "SVN", "Atlassian Jira", "Python Flask", "Postman", "OpenAI API"]
     }
   ],
-    "projects": [
+  "projects": [
     {
-      "title": "Command & Code Labs",
-      "description": "A comprehensive development platform showcasing innovative software engineering projects, tutorials, and interactive coding experiences. Features real-world applications, best practices demonstrations, and educational content for developers.",
-      "url": "https://cclabs.dev",
-      "technologies": ["Web Development", "Cloud Architecture", "Educational Technology", "Interactive Learning"],
+      "title": "CNC Lab: Network Security Training Platform",
+      "description": "Interactive cybersecurity education platform featuring 5 progressive levels of network security labs. Students learn through hands-on simulations covering basic traffic analysis, firewall configuration, IDS/IPS implementation, and TLS/SSL encryption. Each lab includes guided instructions, real-time attack simulations, and AI-powered assistance for personalized learning.",
+      "url": "https://ccdev.app",
+      "technologies": ["React", "Vite", "JavaScript", "Network Security", "Educational Technology", "AI Integration"],
       "highlights": [
-        "Interactive dummy network security concepts",
-        "Real-world software engineering demonstrations",
-        "Educational content for everyone at all levels"
+        "5 progressive security levels: Traffic Analysis → Firewall → IDS → IPS → TLS/SSL",
+        "Interactive network topology with real-time attack simulations",
+        "Built-in AI Assistant for context-aware guidance and explanations",
+        "Real-time logs and feedback system for immediate learning reinforcement",
+        "Progress tracking with browser-based session persistence",
+        "Modern responsive UI built with React and Vite framework"
       ],
       "status": "Live",
-      "icon": "🚀"
+      "icon": "🛡️"
     }
   ],
   "experience": [

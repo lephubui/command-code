@@ -168,13 +168,27 @@ function initializeInteractions() {
         });
     });
 
+    // Smooth scrolling for CTA button
+    document.querySelector('.cta-btn').addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+
     // Add scroll effect to navigation
     window.addEventListener('scroll', function() {
-        const nav = document.querySelector('nav');
+        const nav = document.querySelector('.main-nav');
         if (window.scrollY > 100) {
             nav.style.background = 'rgba(255,255,255,0.98)';
+            nav.style.backdropFilter = 'blur(20px)';
         } else {
-            nav.style.background = 'rgba(255,255,255,0.95)';
+            nav.style.background = '#fff';
+            nav.style.backdropFilter = 'none';
         }
     });
 
@@ -193,39 +207,16 @@ function initializeInteractions() {
         });
     }, observerOptions);
 
-    // Observe all skill categories, job items, education items, project cards, and AI platform links
+    // Observe all animatable elements
     document.querySelectorAll('.skill-category, .job, .education-item, .project-card, .ai-platform-link').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(el);
     });
-
-    // Add typing effect to the header
-    const headerText = document.querySelector('.header-content h1');
-    if (headerText) {
-        headerText.style.overflow = 'hidden';
-        headerText.style.borderRight = '3px solid rgba(255,255,255,0.7)';
-        headerText.style.whiteSpace = 'nowrap';
-        headerText.style.animation = 'typing 3s steps(40, end), blink-caret 0.75s step-end infinite';
-        
-        // Remove typing effect after animation completes
-        setTimeout(() => {
-            headerText.style.borderRight = 'none';
-            headerText.style.animation = 'none';
-        }, 4000);
-    }
 }
 
 // Load portfolio data when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadPortfolioData();
 });
-
-// Optional: Add smooth scroll behavior for better UX
-function smoothScrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
