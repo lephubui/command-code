@@ -66,7 +66,7 @@
     {
       "title": "CNC Lab: Network Security Training Platform",
       "description": "Interactive cybersecurity education platform featuring 5 progressive levels of network security labs. Students learn through hands-on simulations covering basic traffic analysis, firewall configuration, IDS/IPS implementation, and TLS/SSL encryption. Each lab includes guided instructions, real-time attack simulations, and AI-powered assistance for personalized learning.",
-      "url": "https://ccdev.app",
+      "url": "https://cclabs.dev",
       "technologies": ["React", "Vite", "JavaScript", "Network Security", "Educational Technology", "AI Integration"],
       "highlights": [
         "5 progressive security levels: Traffic Analysis → Firewall → IDS → IPS → TLS/SSL",
