@@ -6,7 +6,8 @@
 uint32_t make_mask(unsigned width) {
     if (width == 0) return 0u;
     if (width >= 32) return 0xFFFFFFFFu;
-    return (1u << width) - 1u;
+    // safer construction avoiding out-of-range left shift:
+    return static_cast<uint32_t>(0xFFFFFFFFu >> (32 - width));
 }
 
 // extract inclusive field [hi:lo] from reg (right-aligned)
