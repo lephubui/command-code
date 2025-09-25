@@ -27,3 +27,7 @@ xflowbot/xflowbotvirtualenv/*
 
 # Ignore syslog files
 syslog/config.h
+
+# Ignore python virtual environment
+youtube/python/fastAPI_cnc/fastcnc/*
+
