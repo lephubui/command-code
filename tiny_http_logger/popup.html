@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Tiny HTTP/S Logger</title>
+  <style>
+    /* ================= CC Labs–style dark theme ================= */
+    :root{
+      --bg: #0f0f10;           /* page background */
+      --panel: #151518;        /* cards / modal */
+      --panel-2: #1a1a1d;      /* inputs / chips */
+      --text: #f3f4f6;         /* primary text */
+      --muted: #9aa0a6;        /* secondary text */
+      --border: #242428;       /* subtle borders */
+      --accent-a: #6a5acd;     /* slate purple */
+      --accent-b: #3b82f6;     /* azure blue */
+      --success: #16a34a;
+      --danger: #b91c1c;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --radius: 10px;
+      --radius-sm: 8px;
+      --radius-lg: 12px;
+      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs: 13px;
+      --fs-sm: 12px;
+      --fs-xs: 11px;
+    }
+
+    /* ---- Global ---- */
+    html, body { background: var(--bg); color: var(--text); }
+    body {
+      font: var(--fs)/1.45 var(--font);
+      margin: 12px;
+      width: 800px;
+    }
+
+    /* ---- Toolbar / layout ---- */
+    .bar {
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-bottom: 8px;
+    }
+    .site { font-weight:600; color:#fff; }
+
+    label { font-size: var(--fs-xs); color: var(--muted); display:block; margin-bottom: 4px; }
+
+    input[type="text"], select {
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: var(--fs);
+      width: 190px;
+      outline: none;
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,0);
+    }
+    input::placeholder { color: #6b7280; }
+
+    /* ---- Buttons ---- */
+    .btn{
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      border: 0;
+      color: #fff;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform .06s ease, opacity .15s ease;
+    }
+    .btn:hover { opacity: .9; }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { background: #3a3a3f; color:#bdbdbf; box-shadow:none; cursor:not-allowed; }
+
+    /* ---- Chips ---- */
+    .chip{
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      user-select:none;
+      font-size: var(--fs-sm);
+      background: var(--panel-2);
+      color: var(--muted);
+      transition: background .15s ease, color .15s ease, border-color .15s;
+    }
+    .chip:hover{ color: #e5e7eb; border-color:#3a3a40; }
+    .chip.active{
+      background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+      border-color: transparent;
+      color:#fff; font-weight:700;
+      box-shadow: var(--shadow);
+    }
+
+    /* ---- Table ---- */
+    table {
+      width:100%; border-collapse:collapse; margin-top:10px;
+      background: var(--panel); border-radius: var(--radius); overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    th, td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+    thead th { background:#111114; position:sticky; top:0; z-index:1; }
+    th { text-align:left; font-weight:600; color:#d1d5db; user-select:none; cursor:pointer; }
+    th.sort-asc::after { content:" ↑"; }
+    th.sort-desc::after { content:" ↓"; }
+    .mono { font-family: var(--mono); font-size: var(--fs-sm); }
+    .row { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ---- Badges ---- */
+    .muted { color: var(--muted); }
+    .badge {
+      padding: 3px 8px; border-radius: 7px; font-size: var(--fs-xs); font-weight:600;
+      border:1px solid transparent;
+    }
+    .badge.ok { background: var(--success); color:#fff; }
+    .badge.warn { background: var(--danger); color:#fff; }
+
+    /* ---- Modal ---- */
+    #aboutModal { position:fixed; inset:0; display:none; background: rgba(0,0,0,.55); }
+    #aboutCard {
+      background: var(--panel);
+      width: 540px; margin: 8vh auto; padding: 20px;
+      border-radius: var(--radius-lg); box-shadow: var(--shadow);
+      color: var(--text);
+    }
+    #aboutCard h3 { margin:0 0 8px 0; font-weight:700; }
+    #aboutCard p { margin:6px 0; color: var(--muted); }
+    #aboutClose { float:right; cursor:pointer; color:#c7cad1; }
+    #aboutClose:hover { color:#fff; }
+
+    /* Small checkbox aligns with theme */
+    input[type="checkbox"]{
+      width:14px; height:14px; accent-color:#6476ff;
+      transform: translateY(1px);
+    }
+  </style>
+</head>
+<body>
+    <!-- Ownership Header -->
+  <div class="header" url="https://cclabs.dev/">Command & Code Labs</div>
+
+  <!-- Row 1: primary actions -->
+  <div class="bar">
+    <span class="site" id="siteLabel"></span>
+    <span id="permStatus" class="badge warn" title="Click ‘Enable on this site’ to grant access.">no access</span>
+
+    <button id="btnEnable" class="btn">Enable on this site</button>
+    <button id="btnRefresh" class="btn">Refresh</button>
+    <button id="btnClear" class="btn">Clear</button>
+    <label><input type="checkbox" id="toggleTimeline" /> Timeline view</label>
+  </div>
+
+  <!-- Row 2: secondary actions (About / Exports) + counter on right -->
+  <div class="bar" style="margin-top:-4px; margin-bottom:6px;">
+    <button id="btnAbout" class="btn">About</button>
+    <button id="btnExportCSV" class="btn">Export CSV</button>
+    <button id="btnExportNDJSON" class="btn">Export NDJSON</button>
+    <span id="counter" class="muted" aria-live="polite" style="margin-left:auto;"></span>
+  </div>
+
+  <!-- Row 3: filters -->
+  <div class="bar">
+    <div>
+      <label>Domain filter</label>
+      <input id="qHost" type="text" placeholder="api.example.com or substring" />
+    </div>
+    <div>
+      <label>Regex (URL)</label>
+      <input id="qRegex" type="text" placeholder="e.g. \\b/api/(v1|v2)/" />
+    </div>
+    <div>
+      <label>Method</label>
+      <select id="qMethod"><option>ANY</option><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option></select>
+    </div>
+    <div>
+      <label>Scheme</label>
+      <select id="qScheme"><option>ANY</option><option>https</option><option>http</option></select>
+    </div>
+    <div>
+      <label>Status ≥</label>
+      <input id="qStatusMin" type="text" class="mono" placeholder="e.g. 200" />
+    </div>
+    <div>
+      <label>Tab scope</label>
+      <select id="qTab"><option value="any">ANY</option><option value="current">CURRENT</option></select>
+    </div>
+  </div>
+
+  <!-- Row 4: status chips -->
+  <div class="bar" style="gap:8px; margin-top:4px">
+    <span class="muted">Status class:</span>
+    <span data-class="2" class="chip" id="chip2xx">2xx</span>
+    <span data-class="3" class="chip" id="chip3xx">3xx</span>
+    <span data-class="4" class="chip" id="chip4xx">4xx</span>
+    <span data-class="5" class="chip" id="chip5xx">5xx</span>
+  </div>
+
+  <table id="tbl" aria-live="polite">
+    <thead>
+      <tr>
+        <th data-key="t">Time</th>
+        <th data-key="method">Method</th>
+        <th data-key="scheme">Scheme</th>
+        <th data-key="status">Status</th>
+        <th data-key="type">Type</th>
+        <th data-key="host">Domain</th>
+        <th data-key="url">URL</th>
+        <th data-key="contentLength">Len (bytes)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="timelineContainer" style="display:none; margin-top:8px;"></div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div id="aboutCard">
+      <span id="aboutClose" aria-label="Close">✕</span>
+      <h3 id="aboutTitle">Tiny HTTP/S Logger</h3>
+      <p>Local, per-site HTTP/HTTPS request viewer. No data leaves your device.</p>
+      <p><a target="_blank" href="https://cclabs.dev" style="color:#9bc1ff; text-decoration:none;">Visit CC Labs</a></p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
+<!-- ---- end of popup.html ---- -->
