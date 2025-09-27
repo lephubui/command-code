@@ -1,6 +1,6 @@
 Privacy Policy for Tiny HTTP/S Logger
 
-Effective Date: [today’s date]
+Effective Date: 09/27/2025
 
 Tiny HTTP/S Logger, developed by Command & Code Labs, respects your privacy.
 
