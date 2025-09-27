@@ -251,6 +251,35 @@ function restoreChips(arr) {
   });
 }
 
+// helper: reload active tab, then refresh logs after a short delay
+async function reloadActiveTabAndRefresh(delayMs = 1200) {
+  const { tabId, host, scheme } = await activeTabCtx();
+
+  // only reload http(s) tabs; chrome://, edge:// won't reload
+  if (!tabId || !host || (scheme !== "http" && scheme !== "https")) {
+    // fall back to just refreshing the table
+    await refresh();
+    return;
+  }
+
+  // if site access not granted yet, inform user & skip reload
+  const granted = await hasAnyOriginForHost(host);
+  if (!granted) {
+    // optional: flash the badge to hint at missing permission
+    const badge = document.getElementById("permStatus");
+    if (badge) { badge.textContent = "no access"; badge.className = "badge warn"; }
+    await refresh();
+    return;
+  }
+
+  // reload the tab to generate fresh network traffic
+  await chrome.tabs.reload(tabId);
+
+  // quick follow-up refresh after the page starts reloading
+  setTimeout(refresh, delayMs);
+}
+
+
 // ---- boot + handlers ----
 async function boot() {
   // restore UI state
@@ -291,7 +320,15 @@ async function boot() {
     }
   });
 
-  on("btnRefresh", "click", refresh);
+on("btnRefresh", "click", async (e) => {
+  const btn = e.currentTarget;
+  const old = btn.textContent;
+  btn.textContent = "Reloading…";
+  btn.disabled = true;
+  await reloadActiveTabAndRefresh(1200);
+  setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 1200);
+});
+
   on("btnClear", "click", async () => { await safeMessage({ type: "CLEAR" }); refresh(); });
 
   ["qHost","qRegex","qStatusMin"].forEach(id => on(id, "input", refresh));

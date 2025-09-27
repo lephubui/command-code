@@ -35,6 +35,24 @@
       width: 800px;
     }
 
+    /* ---- Header (clickable) ---- */
+    .header {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      margin: 0 0 14px 0;
+    }
+    .header a {
+      display:flex; align-items:center; gap:10px;
+      text-decoration:none;
+    }
+    .header img {
+      width: 26px; height: 26px; border-radius: 6px; box-shadow: var(--shadow);
+    }
+    .header-title {
+      font-size: 18px; font-weight: 700; letter-spacing:.4px;
+      background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
     /* ---- Toolbar / layout ---- */
     .bar {
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
@@ -137,8 +155,14 @@
   </style>
 </head>
 <body>
-    <!-- Ownership Header -->
-  <div class="header" url="https://cclabs.dev/">Command & Code Labs</div>
+  <!-- Ownership Header (clickable) -->
+  <div class="header">
+    <a href="https://cclabs.dev" target="_blank" rel="noopener noreferrer" aria-label="Open Command & Code Labs">
+      <!-- Use your packaged icon file name here, e.g., 128.png -->
+      <img src="icons/128.png" alt="CC Labs logo" />
+      <div class="header-title">Command & Code Labs</div>
+    </a>
+  </div>
 
   <!-- Row 1: primary actions -->
   <div class="bar">
