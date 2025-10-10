@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Command & Code Labs: Web Firewall</title>
+  <style>
+    body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 12px; }
+    .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+    .badge { background:#111; color:#fff; padding:2px 6px; border-radius:8px; }
+    select, button { padding:6px 8px; border-radius:8px; border:1px solid #ddd; }
+    small { color:#666; }
+    .grow { flex:1 }
+  </style>
+</head>
+<body>
+  <div class="row">
+    <strong>Web Firewall</strong>
+    <span class="badge" id="blocked">0</span>
+  </div>
+  <div class="row">
+    <label for="mode">Mode</label>
+    <select id="mode" class="grow">
+      <option value="off">Off</option>
+      <option value="balanced">Balanced</option>
+      <option value="paranoid">Paranoid</option>
+    </select>
+  </div>
+  <div class="row">
+    <button id="options" class="grow">Settings</button>
+    <button id="telemetry" class="grow">Telemetry</button>
+  </div>
+  <small>Balanced blocks common threats. Paranoid adds stricter patterns and admin path locks.</small>
+  <script src="popup.js"></script>
+</body>
+</html>
