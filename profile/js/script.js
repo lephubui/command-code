@@ -88,7 +88,38 @@ function populateContent() {
                 </a>
             </div>
         </div>
-    `).join('');
+    `).join('') + `
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-icon">🔍</div>
+                <div class="project-title-section">
+                    <h3 class="project-title">Tiny HTTP/S Logger</h3>
+                    <div class="project-status published">Published</div>
+                </div>
+            </div>
+            <p class="project-description">Lightweight Chrome extension to capture and inspect HTTP/S requests for quick debugging, telemetry and audit. Published on the Chrome Web Store.</p>
+            <div class="project-technologies">
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">Chrome Extensions API</span>
+                <span class="tech-tag">Manifest V3</span>
+                <span class="tech-tag">Web Development</span>
+            </div>
+            <div class="project-highlights">
+                <h4>Key Features:</h4>
+                <ul>
+                    <li>Real-time HTTP/HTTPS request monitoring</li>
+                    <li>Lightweight and minimal performance impact</li>
+                    <li>Easy-to-use interface for quick debugging</li>
+                    <li>Published and available on Chrome Web Store</li>
+                </ul>
+            </div>
+            <div class="project-actions">
+                <a href="https://chromewebstore.google.com/detail/tiny-https-logger/gkmfcfbbcibgaifekjmdimhnnpflablc?authuser=0&hl=en" target="_blank" rel="noopener noreferrer" class="project-link">
+                    🔗 Visit Project
+                </a>
+            </div>
+        </div>
+    `;
 
     // Populate experience
     const experienceTimeline = document.getElementById('experience-timeline');
