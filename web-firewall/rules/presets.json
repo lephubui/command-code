@@ -1,0 +1,26 @@
+{
+  "balanced": [
+    {
+      "type": "block",
+      "regexFilter": "(?i)(<img\\s+src=javascript:)",
+      "resourceTypes": ["sub_frame", "script"]
+    },
+    {
+      "type": "block",
+      "regexFilter": "(?i)(data:text/html;base64,)",
+      "resourceTypes": ["sub_frame", "main_frame"]
+    }
+  ],
+  "paranoid": [
+    {
+      "type": "block",
+      "regexFilter": "(?i)(document\\.cookie|localStorage\\.|sessionStorage\\.)",
+      "resourceTypes": ["xmlhttprequest", "script"]
+    },
+    {
+      "type": "block",
+      "regexFilter": "(?i)(/wp-admin|/admin/login|/phpmyadmin)",
+      "resourceTypes": ["xmlhttprequest", "main_frame", "sub_frame"]
+    }
+  ]
+}

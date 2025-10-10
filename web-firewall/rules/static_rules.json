@@ -1,0 +1,47 @@
+[
+  {
+    "id": 10001,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "javascript:",
+      "resourceTypes": ["main_frame", "sub_frame", "script"]
+    }
+  },
+  {
+    "id": 10002,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "data:",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "image", "object"]
+    }
+  },
+  {
+    "id": 10010,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "(?i)(%3Cscript%3E|<script>|onerror=|onload=)",
+      "resourceTypes": ["xmlhttprequest", "script", "sub_frame", "main_frame"]
+    }
+  },
+  {
+    "id": 10020,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "(?i)(union(\n|%0a|\\s)+select|or\\s+1=1|information_schema|sleep\\s*\\(|load_file\\s*\\(|'--|%27--)",
+      "resourceTypes": ["xmlhttprequest", "main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 10030,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "(?i)(/collect\\?|/g/collect\\?|/analytics\\.js|/gtag/js|/pixel\\.gif)",
+      "resourceTypes": ["script", "image", "xmlhttprequest", "beacon"]
+    }
+  }
+]
