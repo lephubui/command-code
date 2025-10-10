@@ -1,0 +1,39 @@
+{
+"manifest_version": 3,
+"name": "Command & Code: Web Firewall",
+"version": "0.1.0",
+"description": "Blocks suspicious requests using rule-based heuristics (XSS/SQLi/trackers/unsafe schemes). Toggle modes and add custom rules.",
+"action": {
+"default_title": "Web Firewall",
+"default_popup": "popup.html"
+},
+"icons": {
+"16": "icons/icon16.png",
+"48": "icons/icon48.png",
+"128": "icons/icon128.png"
+},
+"permissions": [
+"declarativeNetRequest",
+"declarativeNetRequestFeedback",
+"storage",
+"tabs"
+],
+"host_permissions": [
+"<all_urls>"
+],
+"background": {
+"service_worker": "service_worker.js",
+"type": "module"
+},
+"options_page": "options.html",
+"declarative_net_request": {
+"rule_resources": [
+{
+"id": "static",
+"enabled": true,
+"path": "rules/static_rules.json"
+}
+]
+},
+"minimum_chrome_version": "120"
+}
