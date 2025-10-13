@@ -4,33 +4,379 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Firewall — Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 16px; max-width: 840px; }
-    textarea { width:100%; min-height: 200px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    .row { display:flex; gap:8px; align-items:center; margin: 8px 0; }
-    button { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: #fff; }
-    .hint { color:#666; }
-    pre { background:#fafafa; padding:8px; border:1px solid #eee; border-radius:8px; }
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #333333;
+      --border-light: #404040;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #1e1e1e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      padding: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 32px;
+      font-weight: 400;
+    }
+
+    .section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .section:hover {
+      border-color: var(--border-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hint {
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: var(--bg-tertiary);
+      color: var(--accent);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--text-primary);
+      padding: 40px 20px 20px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    pre::before {
+      content: '📝 Example Configuration';
+      position: absolute;
+      top: 8px;
+      left: 20px;
+      background: var(--accent);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 300px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--code-bg);
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      transition: all 0.2s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-light);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #save {
+      background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+      border-color: var(--success);
+    }
+
+    #save:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    #clear {
+      background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+      border-color: var(--danger);
+    }
+
+    #clear:hover {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    }
+
+    #status {
+      margin-left: auto;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    #status.success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    #status.error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .section {
+        padding: 20px;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      #status {
+        margin-left: 0;
+        text-align: center;
+      }
+    }
+
+    /* Animation for status messages */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    #status:not(:empty) {
+      animation: slideIn 0.3s ease;
+    }
   </style>
 </head>
 <body>
-  <h1>Web Firewall — Settings</h1>
-  <p class="hint">Add custom <code>declarativeNetRequest</code> rules in JSON (array). Each rule must include <code>action</code> and <code>condition</code>. Example:</p>
-  <pre>
-[
+  <h1>⚙️ Web Firewall Settings</h1>
+  <div class="subtitle">Configure custom security rules for advanced protection</div>
+
+  <div class="section">
+    <div class="section-title">
+      📝 Custom Rules Configuration
+    </div>
+    <div class="hint">
+      Add custom <code>declarativeNetRequest</code> rules in JSON format. Each rule must include an <code>action</code> and <code>condition</code> object. Rules will be dynamically applied to enhance your firewall protection.
+    </div>
+    
+    <pre>[
   {
     "priority": 1,
     "action": { "type": "block" },
-    "condition": { "regexFilter": "(?i)(/\.env)" , "resourceTypes": ["xmlhttprequest", "main_frame"] }
+    "condition": { 
+      "regexFilter": "(?i)(/\\.env|/config\\.php)", 
+      "resourceTypes": ["xmlhttprequest", "main_frame"] 
+    }
+  },
+  {
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*malicious-domain.com*",
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
   }
-]
-  </pre>
-  <textarea id="rules"></textarea>
-  <div class="row">
-    <button id="save">Save</button>
-    <button id="clear">Clear</button>
-    <span id="status" class="hint"></span>
+]</pre>
+
+    <textarea id="rules" placeholder="Enter your custom rules in JSON format..."></textarea>
+    
+    <div class="controls">
+      <button id="save">
+        💾 Save & Apply Rules
+      </button>
+      <button id="clear">
+        🗑️ Clear All Rules
+      </button>
+      <span id="status"></span>
+    </div>
   </div>
+
+  <div class="section">
+    <div class="section-title">
+      📚 Rule Documentation
+    </div>
+    <div class="hint">
+      <strong>Supported Actions:</strong> <code>block</code>, <code>allow</code>, <code>allowAllRequests</code><br>
+      <strong>Resource Types:</strong> <code>main_frame</code>, <code>sub_frame</code>, <code>script</code>, <code>image</code>, <code>xmlhttprequest</code>, <code>stylesheet</code>, <code>font</code>, <code>media</code>, <code>other</code><br>
+      <strong>Condition Types:</strong> <code>urlFilter</code> (simple pattern), <code>regexFilter</code> (regex pattern), <code>domains</code> (domain list)
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">
+      🛡️ Security Mode Explanation
+    </div>
+    <div class="hint">
+      <div style="margin-bottom: 16px;">
+        <strong>⚖️ Balanced Mode:</strong> Blocks common web threats including malicious scripts, tracking requests, SQL injection attempts, and analytics collection. Provides solid protection without interfering with normal browsing.
+      </div>
+      <div>
+        <strong>🔒 Paranoid Mode:</strong> Maximum security with all Balanced protections plus:
+        <ul style="margin: 12px 0 0 20px; color: var(--text-secondary); line-height: 1.6;">
+          <li><strong>Browser Storage Blocking:</strong> Prevents malicious scripts from accessing cookies, localStorage, and sessionStorage APIs</li>
+          <li><strong>Admin Path Protection:</strong> Blocks access to common administrative panels that are frequently targeted by attackers:
+            <ul style="margin: 8px 0 0 20px; font-size: 13px;">
+              <li><code>/wp-admin</code> - WordPress admin dashboard</li>
+              <li><code>/admin/login</code> - Generic admin login pages</li>
+              <li><code>/phpmyadmin</code> - MySQL database management interface</li>
+            </ul>
+          </li>
+          <li><strong>Enhanced Script Protection:</strong> Stricter filtering of potentially malicious code execution attempts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <script src="options.js"></script>
 </body>
 </html>

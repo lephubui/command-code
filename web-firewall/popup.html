@@ -4,33 +4,297 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Command & Code Labs: Web Firewall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 12px; }
-    .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
-    .badge { background:#111; color:#fff; padding:2px 6px; border-radius:8px; }
-    select, button { padding:6px 8px; border-radius:8px; border:1px solid #ddd; }
-    small { color:#666; }
-    .grow { flex:1 }
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #1a1a1a;
+      --bg-tertiary: #2a2a2a;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #333333;
+      --border-light: #404040;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      width: 320px;
+      padding: 20px;
+      min-height: 200px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .main-title {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1;
+    }
+
+    .shield-icon {
+      font-size: 20px;
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    .badge {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .mode-container {
+      position: relative;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a0a0a0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    select:hover {
+      border-color: var(--border-light);
+      background: var(--bg-tertiary);
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }    button {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-light);
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .description {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0.3; }
+    }
+
+    /* Mode-specific styling */
+    select[value="off"] + .mode-indicator { color: var(--text-muted); }
+    select[value="balanced"] + .mode-indicator { color: var(--warning); }
+    select[value="paranoid"] + .mode-indicator { color: var(--danger); }
+
+    /* Hover effects */
+    .header:hover .shield-icon {
+      transform: rotate(360deg);
+      transition: transform 0.5s ease;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 350px) {
+      body {
+        width: 280px;
+        padding: 16px;
+      }
+      
+      .buttons {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="row">
-    <strong>Web Firewall</strong>
-    <span class="badge" id="blocked">0</span>
+  <div class="header">
+    <div class="title">
+      <span class="shield-icon">🛡️</span>
+      Web Firewall by Command & Code Labs
+    </div>
+    <div class="badge" id="blocked">0</div>
   </div>
-  <div class="row">
-    <label for="mode">Mode</label>
-    <select id="mode" class="grow">
-      <option value="off">Off</option>
-      <option value="balanced">Balanced</option>
-      <option value="paranoid">Paranoid</option>
-    </select>
+
+  <div class="section">
+    <div class="section-title">Security Mode</div>
+    <div class="mode-container">
+      <select id="mode">
+        <option value="off">🔓 Disabled</option>
+        <option value="balanced">⚖️ Balanced Protection</option>
+        <option value="paranoid">🔒 Maximum Security</option>
+      </select>
+    </div>
   </div>
-  <div class="row">
-    <button id="options" class="grow">Settings</button>
-    <button id="telemetry" class="grow">Telemetry</button>
+
+  <div class="buttons">
+    <button id="telemetry">
+      📊 Analytics
+    </button>
+    <button id="options">
+      ⚙️ Settings
+    </button>
+    <button id="about">
+      ℹ️ About
+    </button>
   </div>
-  <small>Balanced blocks common threats. Paranoid adds stricter patterns and admin path locks.</small>
+
+  <div class="description">
+    <div style="margin-bottom: 12px;">
+      <strong>⚖️ Balanced:</strong> Blocks common threats, tracking, malicious scripts, and SQL injection attempts.
+    </div>
+    <div style="margin-bottom: 12px;">
+      <strong>🔒 Maximum Security:</strong> All Balanced protections plus:
+      <ul style="margin: 8px 0 0 16px; font-size: 12px; color: var(--text-secondary);">
+        <li><strong>Browser storage blocking</strong> (cookies, localStorage)</li>
+        <li><strong>Admin path protection</strong> - blocks access to:
+          <ul style="margin: 4px 0 0 16px; font-size: 11px;">
+            <li><code>/wp-admin</code> (WordPress admin)</li>
+            <li><code>/admin/login</code> (generic admin panels)</li>
+            <li><code>/phpmyadmin</code> (database management)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div style="font-size: 11px; color: var(--text-muted); font-style: italic;">
+      💡 Admin paths are common targets for attackers seeking unauthorized access to website control panels.
+    </div>
+  </div>
+
+  <div class="status-indicator">
+    <div class="status-dot"></div>
+    <span>Extension Active</span>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

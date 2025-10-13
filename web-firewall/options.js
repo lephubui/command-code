@@ -18,10 +18,57 @@ $('#save').addEventListener('click', async () => {
 });
 
 $('#clear').addEventListener('click', async () => {
-  $('#rules').value = '[]';
-  await chrome.runtime.sendMessage({ type: 'setCustomRules', rules: [] });
-  $('#status').textContent = 'Cleared.';
-  setTimeout(() => $('#status').textContent = '', 1500);
+  try {
+    // Get current mode before clearing
+    const currentState = await chrome.runtime.sendMessage({ type: 'getState' });
+    const previousMode = currentState?.mode || 'balanced';
+    
+    console.log('Clear button clicked, current mode:', previousMode);
+    
+    // Clear the custom rules in UI
+    $('#rules').value = '[]';
+    
+    // Clear custom rules in background
+    const clearResult = await chrome.runtime.sendMessage({ type: 'setCustomRules', rules: [] });
+    
+    if (!clearResult?.ok) {
+      throw new Error(clearResult?.error || 'Failed to clear custom rules');
+    }
+    
+    // Wait a moment for the clear to complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Verify the mode is still correct
+    const finalState = await chrome.runtime.sendMessage({ type: 'getState' });
+    const finalMode = finalState?.mode;
+    
+    console.log('Final mode after clearing:', finalMode);
+    
+    if (finalMode === 'off' && previousMode !== 'off') {
+      // Mode was unexpectedly disabled, restore it
+      console.log('Mode was unexpectedly disabled, restoring to:', previousMode);
+      await chrome.runtime.sendMessage({ type: 'setMode', mode: previousMode });
+      $('#status').textContent = `Rules cleared and mode restored to ${previousMode}.`;
+    } else {
+      $('#status').textContent = `Rules cleared successfully. Mode: ${finalMode}.`;
+    }
+    
+    $('#status').className = 'success';
+    
+    setTimeout(() => {
+      $('#status').textContent = '';
+      $('#status').className = '';
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Error in clear operation:', error);
+    $('#status').textContent = 'Error: ' + error.message;
+    $('#status').className = 'error';
+    setTimeout(() => {
+      $('#status').textContent = '';
+      $('#status').className = '';
+    }, 3000);
+  }
 });
 
 load();

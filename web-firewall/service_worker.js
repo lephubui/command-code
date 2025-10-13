@@ -97,6 +97,10 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     // Nuclear option: clear everything and restart fresh
     forceCompleteReset().then(() => sendResponse({ ok: true })).catch(e => sendResponse({ ok: false, error: e.message }));
     return true;
+  } else if (msg.type === 'debug:nukeRules') {
+    // Emergency rule clearing for persistent issues
+    emergencyRuleClear().then(() => sendResponse({ ok: true })).catch(e => sendResponse({ ok: false, error: e.message }));
+    return true;
   }
 });
 
@@ -324,8 +328,38 @@ async function buildModeRules(mode) {
 }
 
 async function applyCustomRules(rules) {
-  await chrome.storage.local.set({ customRules: rules });
-  await setMode(currentMode);
+  try {
+    console.log('Applying custom rules:', rules);
+    
+    // Save the current mode before any operations
+    const previousMode = currentMode || 'balanced';
+    console.log('Current mode before applying rules:', previousMode);
+    
+    // Store custom rules
+    await chrome.storage.local.set({ customRules: rules });
+    
+    // Reapply the mode with new custom rules
+    await setMode(previousMode);
+    
+    console.log('Successfully applied custom rules and restored mode:', previousMode);
+  } catch (error) {
+    console.error('Error in applyCustomRules:', error);
+    
+    // If there's an error, ensure we don't lose the current mode
+    const fallbackMode = currentMode || 'balanced';
+    console.log('Fallback: attempting to restore mode:', fallbackMode);
+    
+    try {
+      await setMode(fallbackMode);
+    } catch (fallbackError) {
+      console.error('Fallback mode restoration failed:', fallbackError);
+      // Last resort: set to balanced mode
+      currentMode = 'balanced';
+      await chrome.storage.local.set({ mode: 'balanced' });
+    }
+    
+    throw error; // Re-throw so caller knows there was an issue
+  }
 }
 
 async function getAllDynamicRuleIds() {
@@ -382,6 +416,52 @@ async function forceCompleteReset() {
     
   } catch (error) {
     console.error('Force reset failed:', error);
+    throw error;
+  }
+}
+
+async function emergencyRuleClear() {
+  console.log('EMERGENCY: Nuclear rule clearing initiated...');
+  
+  try {
+    // Get ALL dynamic rules from Chrome
+    const allRules = await chrome.declarativeNetRequest.getDynamicRules();
+    console.log('Found dynamic rules to clear:', allRules.rules?.length || 0);
+    
+    if (allRules.rules && allRules.rules.length > 0) {
+      // Force remove ALL dynamic rules
+      await chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds: allRules.rules.map(r => r.id),
+        addRules: []
+      });
+      console.log('All dynamic rules force-cleared');
+    }
+    
+    // Clear storage
+    await chrome.storage.local.set({ 
+      customRules: [],
+      mode: 'off'
+    });
+    
+    // Reset internal state
+    currentMode = 'off';
+    blockedCount = 0;
+    updateBadge();
+    
+    console.log('EMERGENCY: Complete rule clearing finished');
+    
+    // Wait a moment then restore to balanced mode
+    setTimeout(async () => {
+      try {
+        await setMode('balanced');
+        console.log('Emergency recovery: Restored to balanced mode');
+      } catch (error) {
+        console.error('Emergency recovery failed:', error);
+      }
+    }, 1000);
+    
+  } catch (error) {
+    console.error('Emergency rule clear failed:', error);
     throw error;
   }
 }
