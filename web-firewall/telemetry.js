@@ -56,12 +56,12 @@ async function load() {
     ebody.innerHTML = '';
     const events = [...(t.events || [])].slice(-100).reverse();
     if (events.length === 0) {
-      ebody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">No security events yet</td></tr>';
+      ebody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #666;">No security events yet</td></tr>';
     } else {
       events.forEach(ev => {
         const tr = document.createElement('tr');
         const safeUrl = ev.url.length > 120 ? ev.url.slice(0,120) + '…' : ev.url;
-        tr.innerHTML = `<td>${fmtTime(ev.ts)}</td><td>${ev.domain}</td><td>${ev.resourceType}</td><td><code>${ev.ruleId}</code></td><td>${ev.action}</td><td title="${ev.url}">${safeUrl}</td>`;
+        tr.innerHTML = `<td>${fmtTime(ev.ts)}</td><td>${ev.domain}</td><td><code>${ev.ruleId}</code></td><td>${ev.action}</td><td title="${ev.url}">${safeUrl}</td>`;
         ebody.appendChild(tr);
       });
     }
@@ -90,8 +90,8 @@ $('#exportJson').addEventListener('click', async ()=>{
 $('#exportCsv').addEventListener('click', async ()=>{
   const res = await send({ type: 'telemetry:get' });
   if (!res?.ok) return alert(res?.error || 'Error');
-  const rows = [['ts','time','domain','resourceType','ruleId','rulesetId','action','url']];
-  res.telemetry.events.forEach(ev => rows.push([ev.ts, new Date(ev.ts).toISOString(), ev.domain, ev.resourceType, ev.ruleId, ev.rulesetId, ev.action, ev.url]));
+  const rows = [['ts','time','domain','ruleId','rulesetId','action','url']];
+  res.telemetry.events.forEach(ev => rows.push([ev.ts, new Date(ev.ts).toISOString(), ev.domain, ev.ruleId, ev.rulesetId, ev.action, ev.url]));
   const csv = rows.map(r => r.map(v => '"' + String(v).replaceAll('"','""') + '"').join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'web-firewall-telemetry.csv'; a.click(); URL.revokeObjectURL(url);

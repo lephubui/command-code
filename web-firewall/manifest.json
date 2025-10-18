@@ -30,7 +30,7 @@
 "rule_resources": [
 {
 "id": "static",
-"enabled": true,
+"enabled": false,
 "path": "rules/static_rules.json"
 }
 ]

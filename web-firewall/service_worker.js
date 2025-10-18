@@ -35,6 +35,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     console.error('Error clearing existing rules:', error);
   }
   
+  await setStaticRulesetEnabled(true);
   await setMode('balanced');
 });
 
@@ -101,15 +102,37 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     // Emergency rule clearing for persistent issues
     emergencyRuleClear().then(() => sendResponse({ ok: true })).catch(e => sendResponse({ ok: false, error: e.message }));
     return true;
+  } else if (msg.type === 'debug:status') {
+    // Get comprehensive status including all rule sources
+    getComprehensiveStatus().then((status) => sendResponse({ ok: true, status })).catch(e => sendResponse({ ok: false, error: e.message }));
+    return true;
   }
 });
 
+// Enable/disable the manifest-declared static ruleset by id "static"
+async function setStaticRulesetEnabled(enabled) {
+  try {
+    await chrome.declarativeNetRequest.updateEnabledRulesets({
+      enableRulesetIds: enabled ? ['static'] : [],
+      disableRulesetIds: enabled ? [] : ['static']
+    });
+    
+    await chrome.storage.local.set({ staticRulesetEnabled: !!enabled });
+  } catch (e) {
+    console.error('Failed to toggle static ruleset', e);
+  }
+}
+
 async function setEnabled(on) {
   if (on) {
+    // Ensure static baseline is enabled when turning on
+    await setStaticRulesetEnabled(true);
     await setMode((await chrome.storage.local.get({ mode: 'balanced' })).mode);
     chrome.action.setBadgeText({ text: '' + blockedCount });
   } else {
     await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: await getAllDynamicRuleIds(), addRules: [] });
+    // Disable static rules to ensure nothing keeps blocking while disabled
+    await setStaticRulesetEnabled(false);
     chrome.action.setBadgeText({ text: '' });
   }
 }
@@ -117,31 +140,26 @@ async function setEnabled(on) {
 async function validateAndApplyRules(rules) {
   if (rules.length === 0) return;
   
-  console.log(`Attempting to validate and apply ${rules.length} rules with IDs:`, rules.map(r => r.id));
-  
-  // Test approach: try to add one rule at a time to identify conflicts
   const successfulRules = [];
   
   for (const rule of rules) {
     try {
-      // Test if this single rule can be added
       await chrome.declarativeNetRequest.updateDynamicRules({ 
         removeRuleIds: [], 
         addRules: [rule] 
       });
       
       successfulRules.push(rule);
-      console.log(`✓ Successfully added rule with ID ${rule.id}`);
       
     } catch (error) {
-      console.error(`✗ Failed to add rule with ID ${rule.id}:`, error.message);
+      console.error(`Failed to add rule with ID ${rule.id}:`, error.message);
       
       // Try with a different ID
       let attempts = 0;
       let newId = rule.id;
       
       while (attempts < 100) {
-        newId = Math.floor(Math.random() * 900000) + 100000; // Random ID
+        newId = Math.floor(Math.random() * 900000) + 100000;
         
         try {
           const retryRule = { ...rule, id: newId };
@@ -151,12 +169,10 @@ async function validateAndApplyRules(rules) {
           });
           
           successfulRules.push(retryRule);
-          console.log(`✓ Successfully added rule with fallback ID ${newId} (was ${rule.id})`);
           break;
           
         } catch (retryError) {
           attempts++;
-          console.log(`Retry ${attempts}: ID ${newId} also conflicts`);
         }
       }
       
@@ -166,7 +182,6 @@ async function validateAndApplyRules(rules) {
     }
   }
   
-  console.log(`Successfully applied ${successfulRules.length}/${rules.length} rules`);
   return successfulRules;
 }
 
@@ -176,47 +191,38 @@ async function setMode(mode) {
   updateBadge();
 
   try {
-    // Step 1: Clear all our dynamic rules first
+    if (mode === 'off') {
+      await setStaticRulesetEnabled(false);
+    } else {
+      await setStaticRulesetEnabled(true);
+    }
+
     const removeIds = await getAllDynamicRuleIds();
     if (removeIds.length > 0) {
-      console.log(`Removing ${removeIds.length} existing dynamic rules`);
       await chrome.declarativeNetRequest.updateDynamicRules({ 
         removeRuleIds: removeIds, 
         addRules: [] 
       });
       
-      // Delay to ensure rules are cleared
       await new Promise(resolve => setTimeout(resolve, 200));
     }
 
-    // Step 2: Build new rules
     const proposedRules = await buildModeRules(mode);
     
     if (proposedRules.length > 0) {
-      console.log(`Built ${proposedRules.length} rules for mode: ${mode}`);
-      
-      // Step 3: Use the new validation approach
       const appliedRules = await validateAndApplyRules(proposedRules);
       
-      if (appliedRules.length > 0) {
-        console.log(`✓ Successfully set mode to ${mode} with ${appliedRules.length} rules`);
-      } else {
+      if (appliedRules.length === 0) {
         console.error(`Failed to apply any rules for mode ${mode}`);
         currentMode = 'off';
       }
-    } else {
-      console.log(`No rules needed for mode: ${mode}`);
     }
-    
   } catch (error) {
     console.error('Error setting mode:', error);
     
-    // Fallback: Clear everything and disable
     try {
-      console.log('Attempting fallback recovery...');
       await clearAllDynamicRules();
       currentMode = 'off';
-      console.log('Fallback: Extension disabled due to persistent conflicts');
     } catch (fallbackError) {
       console.error('Fallback recovery failed:', fallbackError);
     }
@@ -224,7 +230,6 @@ async function setMode(mode) {
 }
 
 async function findAvailableIdRange(startId, count) {
-  // Get all existing rules (both static and dynamic)
   const [staticRules, dynamicRules] = await Promise.all([
     chrome.declarativeNetRequest.getSessionRules().catch(() => ({ rules: [] })),
     chrome.declarativeNetRequest.getDynamicRules().catch(() => ({ rules: [] }))
@@ -235,16 +240,11 @@ async function findAvailableIdRange(startId, count) {
     ...(dynamicRules.rules || []).map(r => r.id)
   ]);
   
-  console.log('Existing rule IDs:', Array.from(existingIds).sort((a,b) => a-b));
-  
-  // Use random ID generation approach to avoid conflicts
   const maxAttempts = 1000;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    // Generate random starting ID in a high range
-    const randomStart = Math.floor(Math.random() * 900000) + 100000; // 100k to 1M range
+    const randomStart = Math.floor(Math.random() * 900000) + 100000;
     
     let rangeAvailable = true;
-    // Check if this entire range is available
     for (let i = 0; i < count; i++) {
       if (existingIds.has(randomStart + i)) {
         rangeAvailable = false;
@@ -253,7 +253,6 @@ async function findAvailableIdRange(startId, count) {
     }
     
     if (rangeAvailable) {
-      console.log(`Found available random ID range: ${randomStart} to ${randomStart + count - 1} (${count} rules) after ${attempt + 1} attempts`);
       return randomStart;
     }
   }
@@ -282,8 +281,7 @@ async function buildModeRules(mode) {
     const { customRules } = await chrome.storage.local.get({ customRules: [] });
     ruleCount += (customRules || []).length;
 
-    // Find available ID range for all rules - start much higher to avoid conflicts
-    const startId = await findAvailableIdRange(80000, ruleCount); // Start at 80000
+    const startId = await findAvailableIdRange(80000, ruleCount);
     let currentId = startId;
 
     const addPreset = (arr, label) => {
@@ -294,7 +292,6 @@ async function buildModeRules(mode) {
           action: { type: r.type },
           condition: { regexFilter: r.regexFilter, resourceTypes: r.resourceTypes }
         };
-        console.log(`Adding ${label} rule with ID ${rule.id}`);
         return rule;
       });
       return presetRules;
@@ -308,7 +305,6 @@ async function buildModeRules(mode) {
       rules.push(...addPreset(presets.paranoid, 'paranoid'));
     }
 
-    // Custom user rules
     (customRules || []).forEach((r, idx) => {
       const rule = {
         id: currentId++,
@@ -316,12 +312,9 @@ async function buildModeRules(mode) {
         action: { type: r.type || 'block' },
         condition: r.condition
       };
-      console.log(`Adding custom rule with ID ${rule.id}`);
       rules.push(rule);
     });
-    
-    console.log(`Built ${rules.length} rules with IDs from ${startId} to ${currentId - 1}`);
-  } catch (error) {
+    } catch (error) {
     console.error('Error building mode rules:', error);
   }
   return rules;
@@ -329,82 +322,65 @@ async function buildModeRules(mode) {
 
 async function applyCustomRules(rules) {
   try {
-    console.log('Applying custom rules:', rules);
-    
-    // Save the current mode before any operations
     const previousMode = currentMode || 'balanced';
-    console.log('Current mode before applying rules:', previousMode);
     
-    // Store custom rules
     await chrome.storage.local.set({ customRules: rules });
-    
-    // Reapply the mode with new custom rules
     await setMode(previousMode);
     
-    console.log('Successfully applied custom rules and restored mode:', previousMode);
   } catch (error) {
     console.error('Error in applyCustomRules:', error);
     
-    // If there's an error, ensure we don't lose the current mode
     const fallbackMode = currentMode || 'balanced';
-    console.log('Fallback: attempting to restore mode:', fallbackMode);
     
     try {
       await setMode(fallbackMode);
     } catch (fallbackError) {
       console.error('Fallback mode restoration failed:', fallbackError);
-      // Last resort: set to balanced mode
       currentMode = 'balanced';
       await chrome.storage.local.set({ mode: 'balanced' });
     }
     
-    throw error; // Re-throw so caller knows there was an issue
+    throw error;
   }
 }
 
 async function getAllDynamicRuleIds() {
   const { rules } = await chrome.declarativeNetRequest.getDynamicRules();
-  const ruleIds = (rules || []).map(r => r.id);
-  console.log('Current dynamic rule IDs:', ruleIds);
-  return ruleIds;
+  return (rules || []).map(r => r.id);
 }
 
 async function listAllRules() {
-  const [staticRules, dynamicRules, sessionRules] = await Promise.all([
+  const [dyn, sess, manifestStatic, storage] = await Promise.all([
     chrome.declarativeNetRequest.getDynamicRules().catch(() => ({ rules: [] })),
     chrome.declarativeNetRequest.getSessionRules().catch(() => ({ rules: [] })),
-    fetch(chrome.runtime.getURL('rules/static_rules.json')).then(r => r.json()).catch(() => [])
+    fetch(chrome.runtime.getURL('rules/static_rules.json')).then(r => r.json()).catch(() => []),
+    chrome.storage.local.get({ staticRulesetEnabled: true, mode: 'balanced', enabled: true })
   ]);
-  
+
   return {
-    static: staticRules.rules || [],
-    session: sessionRules.rules || [],
-    manifest: staticRules || []
+    dynamic: dyn.rules || [],
+    session: sess.rules || [],
+    manifestStatic: manifestStatic || [],
+    staticRulesetEnabled: !!storage.staticRulesetEnabled,
+    mode: storage.mode,
+    enabled: storage.enabled
   };
 }
 
 async function forceCompleteReset() {
-  console.log('FORCE RESET: Clearing all rules and resetting state...');
-  
   try {
-    // Clear all dynamic rules
     await clearAllDynamicRules();
     
-    // Reset storage state
     await chrome.storage.local.set({ 
       mode: 'off', 
       customRules: [], 
       enabled: false 
     });
     
-    // Reset internal state
     currentMode = 'off';
     blockedCount = 0;
     updateBadge();
     
-    console.log('FORCE RESET: Complete');
-    
-    // Wait a moment then try to enable balanced mode
     setTimeout(async () => {
       try {
         await chrome.storage.local.set({ enabled: true });
@@ -421,40 +397,28 @@ async function forceCompleteReset() {
 }
 
 async function emergencyRuleClear() {
-  console.log('EMERGENCY: Nuclear rule clearing initiated...');
-  
   try {
-    // Get ALL dynamic rules from Chrome
     const allRules = await chrome.declarativeNetRequest.getDynamicRules();
-    console.log('Found dynamic rules to clear:', allRules.rules?.length || 0);
     
     if (allRules.rules && allRules.rules.length > 0) {
-      // Force remove ALL dynamic rules
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds: allRules.rules.map(r => r.id),
         addRules: []
       });
-      console.log('All dynamic rules force-cleared');
     }
     
-    // Clear storage
     await chrome.storage.local.set({ 
       customRules: [],
       mode: 'off'
     });
     
-    // Reset internal state
     currentMode = 'off';
     blockedCount = 0;
     updateBadge();
     
-    console.log('EMERGENCY: Complete rule clearing finished');
-    
-    // Wait a moment then restore to balanced mode
     setTimeout(async () => {
       try {
         await setMode('balanced');
-        console.log('Emergency recovery: Restored to balanced mode');
       } catch (error) {
         console.error('Emergency recovery failed:', error);
       }
@@ -471,14 +435,10 @@ async function clearAllDynamicRules() {
     const allRules = await chrome.declarativeNetRequest.getDynamicRules();
     if (allRules.rules && allRules.rules.length > 0) {
       const ruleIds = allRules.rules.map(r => r.id);
-      console.log('Clearing dynamic rules with IDs:', ruleIds);
       await chrome.declarativeNetRequest.updateDynamicRules({ 
         removeRuleIds: ruleIds, 
         addRules: [] 
       });
-      console.log('All dynamic rules cleared successfully');
-    } else {
-      console.log('No dynamic rules to clear');
     }
   } catch (error) {
     console.error('Error clearing dynamic rules:', error);
@@ -505,9 +465,8 @@ async function recordTelemetryEvent(info) {
   const domain = tryGetDomain(url);
   const ruleId = info?.rule?.ruleId;
   const rulesetId = info?.rule?.rulesetId || 'dynamic/static';
-  const resourceType = info?.request?.resourceType;
   const action = info?.rule?.action?.type || 'block';
-  const event = { ts: Date.now(), url, domain, ruleId, rulesetId, resourceType, action };
+  const event = { ts: Date.now(), url, domain, ruleId, rulesetId, action };
 
   // Ring buffer
   if (t.events.length >= TELEMETRY_MAX_EVENTS) t.events.shift();
@@ -531,6 +490,34 @@ async function clearTelemetry() {
   await chrome.storage.local.set({ telemetry: { events: [], perRule: {}, perDomain: {}, lastReset: Date.now(), totalBlocked: 0 } });
   blockedCount = 0;
   updateBadge();
+}
+
+async function getComprehensiveStatus() {
+  const storage = await chrome.storage.local.get({ 
+    mode: 'balanced', 
+    enabled: true, 
+    customRules: [], 
+    staticRulesetEnabled: true 
+  });
+  
+  const [dynamicRules, sessionRules, enabledRulesets] = await Promise.all([
+    chrome.declarativeNetRequest.getDynamicRules().catch(() => ({ rules: [] })),
+    chrome.declarativeNetRequest.getSessionRules().catch(() => ({ rules: [] })),
+    chrome.declarativeNetRequest.getEnabledRulesets().catch(() => [])
+  ]);
+  
+  return {
+    currentMode,
+    blockedCount,
+    storage,
+    rules: {
+      dynamic: (dynamicRules.rules || []).length,
+      dynamicIds: (dynamicRules.rules || []).map(r => r.id),
+      session: (sessionRules.rules || []).length,
+      sessionIds: (sessionRules.rules || []).map(r => r.id),
+      enabledRulesets: enabledRulesets || []
+    }
+  };
 }
 
 function tryGetDomain(url) {

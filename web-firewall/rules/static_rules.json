@@ -41,7 +41,7 @@
     "action": { "type": "block" },
     "condition": {
       "regexFilter": "(?i)(/collect\\?|/g/collect\\?|/analytics\\.js|/gtag/js|/pixel\\.gif)",
-      "resourceTypes": ["script", "image", "xmlhttprequest", "beacon"]
+      "resourceTypes": ["script", "image", "xmlhttprequest", "ping"]
     }
   }
 ]
