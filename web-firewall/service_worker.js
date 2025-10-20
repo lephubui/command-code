@@ -59,6 +59,12 @@ chrome.storage.onChanged.addListener((changes) => {
 
 // Increment count and record rich telemetry details when a rule matches
 chrome.declarativeNetRequest.onRuleMatchedDebug?.addListener(async (info) => {
+  // Only record telemetry if extension is enabled and mode is not 'off'
+  const { enabled } = await chrome.storage.local.get({ enabled: true });
+  if (!enabled || currentMode === 'off') {
+    return;
+  }
+  
   blockedCount += 1;
   updateBadge();
   await recordTelemetryEvent(info);
