@@ -23,8 +23,6 @@ $('#clear').addEventListener('click', async () => {
     const currentState = await chrome.runtime.sendMessage({ type: 'getState' });
     const previousMode = currentState?.mode || 'balanced';
     
-    console.log('Clear button clicked, current mode:', previousMode);
-    
     // Clear the custom rules in UI
     $('#rules').value = '[]';
     
@@ -42,11 +40,8 @@ $('#clear').addEventListener('click', async () => {
     const finalState = await chrome.runtime.sendMessage({ type: 'getState' });
     const finalMode = finalState?.mode;
     
-    console.log('Final mode after clearing:', finalMode);
-    
     if (finalMode === 'off' && previousMode !== 'off') {
       // Mode was unexpectedly disabled, restore it
-      console.log('Mode was unexpectedly disabled, restoring to:', previousMode);
       await chrome.runtime.sendMessage({ type: 'setMode', mode: previousMode });
       $('#status').textContent = `Rules cleared and mode restored to ${previousMode}.`;
     } else {

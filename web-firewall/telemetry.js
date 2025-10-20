@@ -13,12 +13,10 @@ async function load() {
   try {
     const res = await send({ type: 'telemetry:get' });
     if (!res?.ok) { 
-      console.error('Telemetry error:', res?.error);
-      alert('Failed to load telemetry: ' + res?.error); 
+      alert('Failed to load telemetry: ' + (res?.error || 'Unknown error')); 
       return; 
     }
     const t = res.telemetry;
-    console.log('Loaded telemetry data:', t);
     
     // Update meta information
     $('#meta').textContent = `Total blocked: ${t.totalBlocked || 0} • Since: ${fmtTime(t.lastReset || Date.now())} • Events stored: ${(t.events || []).length}`;
@@ -44,11 +42,14 @@ async function load() {
     if (rules.length === 0) {
       rtbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: #666;">No active rules yet</td></tr>';
     } else {
-      rules.forEach(([rid, cnt])=>{
+      for (const [rid, cnt] of rules) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td><code>${rid}</code></td><td>${cnt}</td>`;
+        // Get rule description
+        const descRes = await send({ type: 'getRuleDescription', ruleId: rid });
+        const description = descRes?.description || 'Security rule';
+        tr.innerHTML = `<td><code style="cursor: help;" title="${description}">${rid}</code><br><small style="color: #888; font-size: 11px;">${description}</small></td><td>${cnt}</td>`;
         rtbody.appendChild(tr);
-      });
+      }
     }
 
     // Recent events
@@ -58,15 +59,16 @@ async function load() {
     if (events.length === 0) {
       ebody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #666;">No security events yet</td></tr>';
     } else {
-      events.forEach(ev => {
+      for (const ev of events) {
         const tr = document.createElement('tr');
         const safeUrl = ev.url.length > 120 ? ev.url.slice(0,120) + '…' : ev.url;
-        tr.innerHTML = `<td>${fmtTime(ev.ts)}</td><td>${ev.domain}</td><td><code>${ev.ruleId}</code></td><td>${ev.action}</td><td title="${ev.url}">${safeUrl}</td>`;
+        // Get rule description for tooltip
+        const descRes = await send({ type: 'getRuleDescription', ruleId: ev.ruleId });
+        const description = descRes?.description || 'Security rule';
+        tr.innerHTML = `<td>${fmtTime(ev.ts)}</td><td>${ev.domain}</td><td><code style="cursor: help;" title="${description}">${ev.ruleId}</code></td><td>${ev.action}</td><td title="${ev.url}">${safeUrl}</td>`;
         ebody.appendChild(tr);
-      });
+      }
     }
-    
-    console.log('Telemetry data refreshed successfully');
   } catch (error) {
     console.error('Error loading telemetry:', error);
     alert('Error loading telemetry data: ' + error.message);

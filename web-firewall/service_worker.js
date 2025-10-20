@@ -17,12 +17,30 @@ const TELEMETRY_MAX_EVENTS = 5000; // ring buffer size
 // State
 let currentMode = 'off'; // 'off' | 'balanced' | 'paranoid'
 let blockedCount = 0;
+let stateInitialized = false; // Track if we've restored state after service worker restart
 
-chrome.runtime.onInstalled.addListener(async () => {
-  await chrome.storage.local.set({ mode: 'balanced', customRules: [], enabled: true });
-  await ensureTelemetryInit();
+chrome.runtime.onInstalled.addListener(async (details) => {
+  // Only set defaults on first install, not on updates or reloads
+  if (details.reason === 'install') {
+    await chrome.storage.local.set({ mode: 'balanced', customRules: [], enabled: true });
+    await ensureTelemetryInit();
+    await setStaticRulesetEnabled(true);
+    await setMode('balanced');
+  } else if (details.reason === 'update') {
+    // Preserve user's existing settings on update
+    const { mode, enabled } = await chrome.storage.local.get({ mode: 'balanced', enabled: true });
+    await ensureTelemetryInit();
+    
+    // Restore user's previous mode
+    if (enabled) {
+      await setStaticRulesetEnabled(true);
+      await setMode(mode);
+    } else {
+      await setEnabled(false);
+    }
+  }
   
-  // Clear any existing dynamic rules to prevent conflicts
+  // Clear any existing dynamic rules to prevent conflicts (always do this)
   try {
     const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
     if (existingRules.rules && existingRules.rules.length > 0) {
@@ -34,21 +52,36 @@ chrome.runtime.onInstalled.addListener(async () => {
   } catch (error) {
     console.error('Error clearing existing rules:', error);
   }
-  
-  await setStaticRulesetEnabled(true);
-  await setMode('balanced');
 });
 
-chrome.runtime.onStartup.addListener(async () => {
-  // Restore state from storage on browser startup
-  const { mode, enabled } = await chrome.storage.local.get({ mode: 'balanced', enabled: true });
+// Restore state from storage - called on browser startup AND service worker restart
+async function restoreState() {
+  if (stateInitialized) {
+    return;
+  }
+  
+  const { mode, enabled, blockedCount: savedBlockedCount } = await chrome.storage.local.get({ 
+    mode: 'balanced', 
+    enabled: true,
+    blockedCount: 0
+  });
+  
   currentMode = mode;
+  blockedCount = savedBlockedCount || 0;
+  stateInitialized = true;
+  
+  // Update badge with restored count
+  updateBadge();
   
   if (enabled) {
     await setMode(mode);
   } else {
     await setEnabled(false);
   }
+}
+
+chrome.runtime.onStartup.addListener(async () => {
+  await restoreState();
 });
 
 chrome.storage.onChanged.addListener((changes) => {
@@ -67,22 +100,44 @@ chrome.declarativeNetRequest.onRuleMatchedDebug?.addListener(async (info) => {
   
   blockedCount += 1;
   updateBadge();
+  
+  // Persist blocked count to storage so it survives service worker restarts
+  await chrome.storage.local.set({ blockedCount });
+  
   await recordTelemetryEvent(info);
 });
 
 chrome.action.onClicked.addListener(async () => {
+  // Restore state if needed (service worker may have restarted)
+  if (!stateInitialized) {
+    await restoreState();
+  }
+  
   // Quick toggle enable/disable
   const { enabled } = await chrome.storage.local.get({ enabled: true });
-  await chrome.storage.local.set({ enabled: !enabled });
-  await setEnabled(!enabled);
+  const newState = !enabled;
+  await chrome.storage.local.set({ enabled: newState });
+  await setEnabled(newState);
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+  // Restore state on first message after service worker restart
+  (async () => {
+    if (!stateInitialized) {
+      await restoreState();
+    }
+    
+    await handleMessage(msg, sendResponse);
+  })();
+  
+  return true; // Always return true for async operations
+});
+
+async function handleMessage(msg, sendResponse) {
   if (msg.type === 'getState') {
     sendResponse({ mode: currentMode, blockedCount });
   } else if (msg.type === 'setMode') {
     setMode(msg.mode).then(() => sendResponse({ ok: true })).catch(e => sendResponse({ ok: false, error: e.message }));
-    return true;
   } else if (msg.type === 'setCustomRules') {
     applyCustomRules(msg.rules).then(() => sendResponse({ ok: true })).catch(e => sendResponse({ ok: false, error: e.message }));
     return true;
@@ -112,8 +167,11 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     // Get comprehensive status including all rule sources
     getComprehensiveStatus().then((status) => sendResponse({ ok: true, status })).catch(e => sendResponse({ ok: false, error: e.message }));
     return true;
+  } else if (msg.type === 'getRuleDescription') {
+    // Get human-readable description for a rule ID
+    sendResponse({ ok: true, description: getRuleDescription(msg.ruleId) });
   }
-});
+}
 
 // Enable/disable the manifest-declared static ruleset by id "static"
 async function setStaticRulesetEnabled(enabled) {
@@ -194,6 +252,10 @@ async function validateAndApplyRules(rules) {
 async function setMode(mode) {
   currentMode = mode;
   blockedCount = 0;
+  
+  // Save reset blocked count to storage
+  await chrome.storage.local.set({ blockedCount: 0 });
+  
   updateBadge();
 
   try {
@@ -219,19 +281,15 @@ async function setMode(mode) {
       const appliedRules = await validateAndApplyRules(proposedRules);
       
       if (appliedRules.length === 0) {
-        console.error(`Failed to apply any rules for mode ${mode}`);
-        currentMode = 'off';
+        console.error(`Failed to apply any rules for mode ${mode} - possible rule ID conflicts`);
       }
     }
+    
+    // Successfully set mode - update storage to ensure consistency
+    await chrome.storage.local.set({ mode: currentMode });
+    
   } catch (error) {
     console.error('Error setting mode:', error);
-    
-    try {
-      await clearAllDynamicRules();
-      currentMode = 'off';
-    } catch (fallbackError) {
-      console.error('Fallback recovery failed:', fallbackError);
-    }
   }
 }
 
@@ -270,8 +328,11 @@ async function buildModeRules(mode) {
   const rules = [];
   try {
     const presets = await fetch(chrome.runtime.getURL('rules/presets.json')).then(r => r.json());
-    const enabled = (await chrome.storage.local.get({ enabled: true })).enabled;
-    if (!enabled || mode === 'off') return rules;
+    const { enabled } = await chrome.storage.local.get({ enabled: true });
+    
+    if (!enabled || mode === 'off') {
+      return rules;
+    }
 
     let ruleCount = 0;
     
@@ -493,7 +554,10 @@ async function getTelemetry() {
 }
 
 async function clearTelemetry() {
-  await chrome.storage.local.set({ telemetry: { events: [], perRule: {}, perDomain: {}, lastReset: Date.now(), totalBlocked: 0 } });
+  await chrome.storage.local.set({ 
+    telemetry: { events: [], perRule: {}, perDomain: {}, lastReset: Date.now(), totalBlocked: 0 },
+    blockedCount: 0  // Also reset the persistent blocked count
+  });
   blockedCount = 0;
   updateBadge();
 }
@@ -528,4 +592,38 @@ async function getComprehensiveStatus() {
 
 function tryGetDomain(url) {
   try { return new URL(url).hostname || ''; } catch { return ''; }
+}
+
+// Rule ID descriptions for user reference
+function getRuleDescription(ruleId) {
+  const descriptions = {
+    // Static rules (10000-10999)
+    10001: "🚫 JavaScript URL Protocol - Blocks javascript: URLs (XSS prevention)",
+    10002: "🚫 Data URL Protocol - Blocks data: URLs in scripts/frames (XSS prevention)",
+    10010: "🛡️ XSS Patterns - Blocks <script> tags, onerror, onload in URLs",
+    10020: "💉 SQL Injection - Blocks SQL injection patterns (UNION, OR 1=1, etc.)",
+    10030: "📊 Analytics/Tracking - Blocks Google Analytics, tracking pixels, telemetry",
+    
+    // Dynamic rules for Balanced/Paranoid modes start at 80000+
+    // These descriptions are generic since IDs are generated dynamically
+  };
+  
+  const id = parseInt(ruleId);
+  
+  // Static rules
+  if (descriptions[id]) {
+    return descriptions[id];
+  }
+  
+  // Dynamic rules (assigned at runtime)
+  if (id >= 80000 && id < 1000000) {
+    return "🔧 Dynamic Rule - Runtime security rule (Balanced/Paranoid mode)";
+  }
+  
+  // Custom rules
+  if (id >= 55000 && id < 80000) {
+    return "⚙️ Custom Rule - User-defined blocking rule";
+  }
+  
+  return "🔒 Security Rule - Blocking malicious content";
 }

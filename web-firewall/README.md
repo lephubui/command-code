@@ -59,35 +59,67 @@
 *Recommended for daily browsing*
 
 **Static Protection (Always Active):**
-- ✅ **XSS Prevention**: Blocks `javascript:` URLs and malicious scripts
-- ✅ **Data URL Protection**: Prevents malicious data URI execution
-- ✅ **Script Injection Blocking**: Detects `<script>` tags and event handlers
-- ✅ **SQL Injection Defense**: Blocks database attack patterns
-- ✅ **Analytics Blocking**: Stops Google Analytics and tracking pixels
 
-**Dynamic Protection:**
-- ✅ **Image XSS Protection**: Prevents JavaScript in image sources
-- ✅ **Base64 HTML Blocking**: Stops encoded malicious content
+| Rule ID | Protection | What It Blocks | Example |
+|---------|------------|----------------|---------|
+| **10001** | 🚫 JavaScript URL Protocol | `javascript:` URLs | `javascript:alert(document.cookie)` |
+| **10002** | 🚫 Data URL Protocol | Malicious `data:` URIs | `data:text/html,<script>alert(1)</script>` |
+| **10010** | 🛡️ XSS Patterns | Script tags, event handlers in URLs | `?q=<script>`, `?img=x onerror=` |
+| **10020** | 💉 SQL Injection | Database attack patterns | `?id=1' OR '1'='1`, `UNION SELECT` |
+| **10030** | 📊 Analytics/Tracking | Google Analytics, pixels | `/analytics.js`, `/pixel.gif` |
 
-**Total Rules: 7**
+**Dynamic Protection (Runtime Rules):**
+- ✅ **Image XSS Protection**: Prevents `<img src=javascript:>` attacks
+- ✅ **Base64 HTML Blocking**: Stops `data:text/html;base64,` encoded content
+
+**Total Rules: ~7** (5 static + 2 dynamic)
 
 ### 🔒 **Maximum Security Mode**
 *For high-risk environments and maximum protection*
 
-**Includes ALL Balanced Protection PLUS:**
-- ✅ **Browser Storage Blocking**: Prevents access to cookies, localStorage, sessionStorage
-- ✅ **Admin Path Protection**: Blocks access to:
-  - `/wp-admin` (WordPress admin panels)
-  - `/admin/login` (Generic admin interfaces)
-  - `/phpmyadmin` (Database management tools)
+**Includes ALL Balanced Protection PLUS Enhanced Paranoid Rules:**
 
-**Total Rules: 9**
+| Protection Type | What It Blocks | Use Case |
+|----------------|----------------|----------|
+| 🍪 **Browser Storage Security** | `document.cookie`, `localStorage`, `sessionStorage` access | Prevents tracking and cookie theft |
+| 🔐 **Admin Path Protection** | `/wp-admin`, `/admin/login`, `/phpmyadmin` | Blocks accidental admin access attempts |
+| 🎯 **Additional XSS Vectors** | Advanced attack patterns | Enhanced malicious content detection |
 
-**Use Cases:**
-- Public Wi-Fi networks
-- Browsing untrusted websites
-- High-security work environments
-- Preventing accidental admin access
+**Total Rules: ~9** (5 static + 4 dynamic)
+
+**Recommended For:**
+- 🌐 Public Wi-Fi networks
+- 🔍 Browsing untrusted websites
+- 🏢 High-security work environments
+- 🛡️ Maximum privacy protection
+- 🚫 Preventing accidental admin access
+
+---
+
+## 🆔 Understanding Rule IDs
+
+Every blocked request is tagged with a **Rule ID** that identifies which security rule blocked it.
+
+### Rule ID Ranges
+
+| ID Range | Type | Description |
+|----------|------|-------------|
+| **10000-10999** | Static Rules | Core security (always active when enabled) |
+| **80000+** | Dynamic Rules | Mode-specific runtime rules (Balanced/Paranoid) |
+| **55000-79999** | Custom Rules | Your user-defined rules |
+
+### Quick Rule Reference
+
+**Common Rule IDs You'll See:**
+- **10001**: 🚫 Blocked JavaScript URL (XSS prevention)
+- **10002**: 🚫 Blocked Data URL (XSS prevention)
+- **10010**: 🛡️ Blocked XSS pattern in URL
+- **10020**: 💉 Blocked SQL injection attempt
+- **10030**: 📊 Blocked analytics/tracking script
+
+**Pro Tip:** Hover over any Rule ID in the Analytics page to see a detailed description of what it blocks!
+
+📖 **Full Reference:** See [RULE_ID_REFERENCE.md](RULE_ID_REFERENCE.md) for complete rule documentation with examples and debugging tips.
 
 ---
 
@@ -105,8 +137,31 @@ Access detailed security analytics through the **📊 Analytics** button:
 ### Key Metrics
 - **Blocked request counts** by domain and rule
 - **Timeline of security events** with full request details
-- **Rule performance statistics** for optimization
+- **Rule effectiveness statistics** - See which rules are most active
+- **Rule descriptions** - Hover over Rule IDs for explanations
 - **Historical threat patterns** for analysis
+
+### Understanding Telemetry Data
+
+**📊 Top Rules Table:**
+- Shows most active security rules
+- Each rule displays its ID and description
+- Count indicates how many times it blocked content
+- Higher counts may indicate:
+  - 📊 Heavy tracking on visited sites (Rule 10030)
+  - 🛡️ XSS attack attempts (Rules 10010)
+  - 💉 SQL injection attempts (Rule 10020)
+
+**🌐 Top Blocked Domains:**
+- Analytics domains (google-analytics.com, doubleclick.net)
+- Ad networks and trackers
+- Potentially malicious domains
+
+**📋 Recent Security Events:**
+- Complete log of last 100 blocked requests
+- Hover over Rule IDs to see what was blocked and why
+- Timestamp, domain, rule, action, and full URL
+- Export to CSV/JSON for detailed analysis
 
 ---
 
@@ -138,19 +193,45 @@ Create powerful custom blocking rules using Chrome's Declarative Net Request API
 ## 🛠️ Demo Scenarios
 
 ### Testing Balanced Mode
-1. **Visit analytics-heavy sites**: CNN, Forbes, Amazon
-2. **Check telemetry**: See Google Analytics blocks in real-time
-3. **Monitor counter**: Watch blocked requests increase
+1. **Visit analytics-heavy sites**: CNN, Forbes, TechCrunch
+2. **Open Analytics**: Click "📊 Analytics" button
+3. **Check telemetry**: 
+   - See **Rule 10030** (Analytics/Tracking) blocking Google Analytics
+   - Watch blocked counter increase on extension badge
+   - View "Top Blocked Domains" showing google-analytics.com, etc.
+4. **Hover over Rule IDs**: See descriptions like "📊 Analytics/Tracking - Blocks Google Analytics..."
 
 ### Testing Maximum Security
-1. **Try accessing admin paths**: Search for WordPress demo sites
-2. **Visit storage-heavy sites**: Social media, e-commerce platforms
-3. **Observe additional blocking**: Admin path and storage protection
+1. **Enable Maximum Security mode** in popup
+2. **Try accessing admin paths**: 
+   - Search for WordPress demo sites
+   - Attempt to access `/wp-admin` or `/phpmyadmin`
+3. **Visit storage-heavy sites**: Social media, e-commerce platforms
+4. **Check telemetry**:
+   - See **dynamic rules (80000+)** for storage blocking
+   - More rules active than Balanced mode
+   - Additional blocking for cookie/localStorage access
 
 ### Custom Rules Demo
-1. **Add blocking rule** for specific domain in Settings
-2. **Test the rule** by visiting the blocked domain
-3. **Verify in telemetry**: See custom rule effectiveness
+1. **Go to Options page** (⚙️ Settings button)
+2. **Add custom blocking rule**:
+   ```json
+   [
+     {
+       "priority": 1,
+       "action": { "type": "block" },
+       "condition": {
+         "urlFilter": "*example-tracker.com*",
+         "resourceTypes": ["script", "image"]
+       }
+     }
+   ]
+   ```
+3. **Save and test**: Visit a site with that domain
+4. **Check telemetry**:
+   - See **Rule ID 55000+** (Custom rules range)
+   - Verify your custom rule is working
+   - Rule description shows "⚙️ Custom Rule - User-defined"
 
 ---
 
@@ -221,7 +302,24 @@ Create powerful custom blocking rules using Chrome's Declarative Net Request API
 
 ---
 
-## 📄 License
+## � Documentation
+
+### Complete Guides
+- 📖 **[RULE_ID_REFERENCE.md](RULE_ID_REFERENCE.md)**: Complete rule ID documentation with examples
+- 🔧 **[DEBUG_MODE_SWITCHING.md](DEBUG_MODE_SWITCHING.md)**: Troubleshooting mode switching issues
+- 🚨 **[TROUBLESHOOTING_BLOCKING.md](TROUBLESHOOTING_BLOCKING.md)**: Debugging unexpected blocking
+- ⚙️ **[SERVICE_WORKER_FIX.md](SERVICE_WORKER_FIX.md)**: Technical details on service worker lifecycle
+- 🔐 **[SECURITY.md](SECURITY.md)**: Security policy and vulnerability reporting
+- 🔒 **[PRIVACY.md](PRIVACY.md)**: Privacy policy and data handling
+
+### Quick Links
+- **Rule explanations**: [RULE_ID_REFERENCE.md](RULE_ID_REFERENCE.md)
+- **Debug commands**: [DEBUG_COMMANDS.md](DEBUG_COMMANDS.md)
+- **All documentation**: See repository root for complete guides
+
+---
+
+## �📄 License
 
 **MIT License** - See LICENSE file for details
 
