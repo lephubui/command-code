@@ -18,11 +18,11 @@ document.getElementById('options').addEventListener('click', () => {
 });
 
 document.getElementById('telemetry').addEventListener('click', () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL('telemetry.html') });
+  window.open(chrome.runtime.getURL('telemetry.html'), '_blank');
 });
 
 document.getElementById('about').addEventListener('click', () => {
-  chrome.tabs.create({ url: 'https://www.cclabs.dev/product/web-firewall-extention' });
+  window.open('https://www.cclabs.dev/product/web-firewall', '_blank');
 });
 
 init();

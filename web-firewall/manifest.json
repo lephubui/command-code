@@ -1,8 +1,8 @@
 {
 "manifest_version": 3,
 "name": "Command & Code: Web Firewall",
-"version": "1.0.0",
-"description": "Advanced web security extension blocking XSS, SQL injection, and tracking with real-time analytics. Privacy-first, local-only protection.",
+"version": "1.0.1",
+"description": "Block XSS, SQL injection, and trackers with real-time analytics. Privacy-first local-only protection for secure browsing.",
 "action": {
 "default_title": "Web Firewall",
 "default_popup": "popup.html"
@@ -15,8 +15,7 @@
 "permissions": [
 "declarativeNetRequest",
 "declarativeNetRequestFeedback",
-"storage",
-"tabs"
+"storage"
 ],
 "host_permissions": [
 "<all_urls>"
