@@ -206,7 +206,9 @@ async function exportNDJSON() {
 }
 
 // ---- About modal ----
-function openAbout() { const m = $("#aboutModal"); if (m) m.style.display = "block"; }
+function openAbout() { 
+
+}
 function closeAbout() { const m = $("#aboutModal"); if (m) m.style.display = "none"; }
 
 // ---- UI sync (now toggles Enable/Disable) ----
@@ -336,7 +338,9 @@ on("btnRefresh", "click", async (e) => {
   chips.forEach(c => c && c.addEventListener("click", toggleChip));
   on("btnExportCSV", "click", exportCSV);
   on("btnExportNDJSON", "click", exportNDJSON);
-  on("btnAbout", "click", openAbout);
+  on("btnAbout", "click", () => {
+    window.open("https://www.cclabs.dev/product/web-firewall", "_blank");
+  });
   on("aboutClose", "click", closeAbout);
   const modal = $("#aboutModal");
   if (modal) modal.addEventListener("click", (e) => { if (e.target.id === "aboutModal") closeAbout(); });
@@ -346,5 +350,11 @@ on("btnRefresh", "click", async (e) => {
   await refresh();
 }
 
-boot();
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
+}
+
 // ---- end of popup.js ----

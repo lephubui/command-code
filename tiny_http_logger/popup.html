@@ -135,12 +135,21 @@
     .badge.warn { background: var(--danger); color:#fff; }
 
     /* ---- Modal ---- */
-    #aboutModal { position:fixed; inset:0; display:none; background: rgba(0,0,0,.55); }
+    #aboutModal { 
+      position:fixed; 
+      inset:0; 
+      display:none; 
+      background: rgba(0,0,0,.55); 
+      z-index: 9999;
+      backdrop-filter: blur(2px);
+    }
     #aboutCard {
       background: var(--panel);
       width: 540px; margin: 8vh auto; padding: 20px;
       border-radius: var(--radius-lg); box-shadow: var(--shadow);
       color: var(--text);
+      position: relative;
+      z-index: 10000;
     }
     #aboutCard h3 { margin:0 0 8px 0; font-weight:700; }
     #aboutCard p { margin:6px 0; color: var(--muted); }
@@ -238,15 +247,7 @@
 
   <div id="timelineContainer" style="display:none; margin-top:8px;"></div>
 
-  <!-- About Modal -->
-  <div id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
-    <div id="aboutCard">
-      <span id="aboutClose" aria-label="Close">✕</span>
-      <h3 id="aboutTitle">Tiny HTTP/S Logger</h3>
-      <p>Local, per-site HTTP/HTTPS request viewer. No data leaves your device.</p>
-      <p><a target="_blank" href="https://cclabs.dev" style="color:#9bc1ff; text-decoration:none;">Visit CC Labs</a></p>
-    </div>
-  </div>
+
 
   <script src="popup.js"></script>
 </body>
