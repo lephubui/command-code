@@ -1,0 +1,134 @@
+Welcome to Chapter 3: Dynamic Malware Analysis.
+In the previous chapter, we studied malware from the outside - inspecting its structure, uncovering embedded strings, analyzing imports, and mapping out what the malware could do.
+
+Now we take the next step.
+
+Dynamic analysis is where malware analyst meets scientist.
+We execute malware deliberately, safely, in a tightly controlled environment and observe how it behaves when it comes alive.
+
+It’s one of the most fascinating and tense parts of cybersecurity.
+Because once you press “run,” everything becomes real.
+
+You might ask: Why Dynamic Analysis Matters
+
+Static analysis shows intentions.
+Dynamic analysis shows actions.
+
+Malware often hides its real capabilities until it’s executed:
+Payloads decrypt only in memory
+Secondary stages download after launch
+Injection happens only after certain checks
+Malicious code runs only after delays
+Command-and-control (C2) communication activates only under real conditions
+
+To understand a threat fully, you must watch it operate. This is the moment you stop reading the blueprint and start observing the machine.
+
+When creating a Safe Malware Lab. You never run malware on: Your main computer, A company asset, A cloud VM connected to production, A network with internet access, or Anything you care about because Malware doesn’t forgive mistakes.
+When it comes to analysts build isolated environments, often using: Virtual machines (VMware, VirtualBox, Hyper-V), Sandbox systems like Cuckoo Sandbox  or Any.Run, Takes Snapshot or revert features, Host-only networking, Fake DNS servers or controlled “internet simulation”, Toolkits like Sysinternals Suite, Process Monitor, Wireshark, and Execution monitoring frameworks. 
+
+Those environment configurations act like a digital quarantine chamber. Inside them, malware can run freely without escaping into the real world. 
+
+Then what Happens When Malware Executes. Let’s imagine the moment you double-click a suspicious executable. At first, nothing might happen: No window, No warning, Just silence.
+But under the surface, a storm is forming. Dynamic analysis tools reveal:
+1. File System Changes
+Malware often creates new files or folders that :
+Drops additional payloads
+Creates hidden directories
+Copies itself under a new name
+Generates encrypted files (in ransomware cases)
+or Alters executables or DLLs
+These are clues artifacts of the malware’s activity.
+Registry Modifications
+
+2. Persistence is everything. Malware doesn’t want to disappear after a reboot.
+You might observe:
+Run keys in the registry
+Startup scripts
+New services
+Browser helper objects
+WMI event subscriptions
+Or Scheduled tasks
+This tells you the malware plans to survive beyond the initial launch.
+
+3. Process Activity. Malware often injects itself into legitimate system processes like:
+explorer.exe, svchost.exe, winlogon.exe, or chrome.exe
+Process injection helps malware hide, escalate privileges, or evade security tools.
+In a sandbox, you might see: A child process unexpectedly launching PowerShell, A process hollowing another, A process rewriting the memory of a system binary, and Anything unusual in the process tree is a red flag.
+
+4. Network Behavior
+Most malware communicates with a remote command server.
+Dynamic analysis reveals:
+DNS lookups to suspicious domains
+HTTP/HTTPS beaconing
+Encrypted payloads leaving the machine
+Tor or proxy connections
+Data exfiltration attempts
+Hardcoded IP addresses
+Unusual ports or protocols
+Network traffic is the lifeblood of malware.
+Cut the network, and many samples fail to run their full routine. This is classic command-and-control communication.
+
+5. Memory Behavior
+
+The most advanced malware hides only in memory:
+Reflective DLL injection
+Decrypting payloads on the fly
+Shellcode execution
+or Fileless persistence
+Tools like Process Hacker, Volatility, and memory scanners reveal:
+Suspicious memory regions
+Unpacked payloads
+Injected threads
+or Code that never touched the disk
+
+This is where static and dynamic analysis merge, seeing decrypted code in memory tells you far more than packed binaries on disk.
+
+The challenge is Malware authors know you’re analyzing them. Many samples detect sandboxes or debugging tools. Evasion strategies include:
+Checking for virtual machine artifacts
+Sleeping for long periods (hoping analysts give up)
+Detecting breakpoints
+Detecting analysis tools
+Executing only when certain apps are open
+Requiring internet connectivity
+Using random delays
+Ad encrypting strings until runtime
+
+You might see malware that behaves perfectly normal…until the 5th or 10th execution.
+Or malware that does nothing if it detects it's running in a lab. This tug-of-war is what makes malware analysis both challenging and thrilling.
+
+A Realistic Dynamic Analysis Scenario. Imagine launching a suspicious file named: invoice_viewer.exe
+Nothing appears on screen.
+But then: A new process spawns, It injects into explorer.exe, It creates a hidden directory
+It writes a file named sync.dll,  A scheduled task appears, It makes an outbound HTTP request to a strange domain, and It modifies the registry. 
+
+Then you notice:
+A series of encrypted messages being sent every 30 seconds
+Downloads of additional modules
+A beacon pattern consistent with a botnet loader
+
+In just a few minutes, the malware has: Installed itself, Hidden itself, Communicated with its controller, or Downloaded more components. Static analysis gave clues and Dynamic analysis confirms reality.
+
+All and all, Why Dynamic Analysis Matters for Software Engineers
+Dynamic analysis helps engineers understand:
+How malicious input triggers dangerous behavior
+How malware abuses normal Windows APIs
+How subprocesses and child processes can be exploited
+Why secure defaults matter
+Why logs and telemetry are essential for incident response
+How malicious code infiltrates container and cloud environments
+What behavioral monitoring tools look for.
+
+You could begin to write applications with security in mind:
+careful file operations
+sanitized inputs
+limited privileges
+logging that captures anomalies
+safe subprocess calls
+least-access cloud roles
+You write software that doesn’t just work and you write software that holds up under attack.
+
+Dynamic analysis reveals the malware’s actions.
+But to truly understand its purpose, you must categorize those actions into recognizable patterns
+the fingerprints of malicious behavior.
+
+In the next part, we explore Behavioral Patterns, the traits that define malware families and reveal an attacker’s strategy.
