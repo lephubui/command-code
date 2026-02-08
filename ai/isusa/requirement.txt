@@ -4,3 +4,4 @@ Flask-SQLAlchemy
 psycopg2-binary
 openai==0.28
 python-dotenv
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
