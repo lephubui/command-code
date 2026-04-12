@@ -14,6 +14,11 @@
     <nav class="main-nav">
         <div class="container nav-container">
             <div class="logo">CC<span>Labs</span></div>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
             <ul id="navigation">
                 <!-- Navigation will be populated by JavaScript -->
             </ul>
@@ -25,7 +30,7 @@
             <h1 id="header-name">Loading...</h1>
             <p id="header-title">Loading...</p>
             <p class="hero-subtitle">Building tools, sharing knowledge, and empowering developers</p>
-            <a href="#projects" class="cta-btn">Explore Projects</a>
+            <a href="#products" class="cta-btn">Explore Products</a>
             <div class="contact-info" id="contact-info">
                 <!-- Contact info will be populated by JavaScript -->
             </div>
@@ -37,7 +42,18 @@
             <div class="container">
                 <h2 class="section-title">Summary</h2>
                 <div class="summary-content">
-                    <p id="summary-text">Loading...</p>
+                    <p class="summary-tagline" id="summary-tagline"></p>
+                    <p class="summary-description" id="summary-text">Loading...</p>
+                    <div class="summary-metrics" id="summary-metrics"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products" class="section">
+            <div class="container">
+                <h2 class="section-title">Products</h2>
+                <div class="projects-grid" id="projects-grid">
+                    <!-- Products will be populated by JavaScript -->
                 </div>
             </div>
         </section>
@@ -47,15 +63,6 @@
                 <h2 class="section-title">Skills</h2>
                 <div class="skills-grid" id="skills-grid">
                     <!-- Skills will be populated by JavaScript -->
-                </div>
-            </div>
-        </section>
-
-        <section id="projects" class="section">
-            <div class="container">
-                <h2 class="section-title">Projects</h2>
-                <div class="projects-grid" id="projects-grid">
-                    <!-- Projects will be populated by JavaScript -->
                 </div>
             </div>
         </section>
@@ -80,17 +87,31 @@
 
         <section id="ai-contents" class="section">
             <div class="container">
-                <h2 class="section-title">AI Contents</h2>
+                <h2 class="section-title">Contents</h2>
                 <div class="ai-contents-section" id="ai-contents-section">
                     <!-- AI Contents will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section">
+            <div class="container">
+                <h2 class="section-title">Contact</h2>
+                <div class="contact-section" id="contact-section">
+                    <!-- Contact will be populated by JavaScript -->
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <div class="container">
-            <p id="footer-text">Loading...</p>
+        <div class="container footer-container">
+            <div class="footer-top" id="footer-links">
+                <!-- Footer links populated by JS -->
+            </div>
+            <div class="footer-bottom">
+                <p id="footer-text">Loading...</p>
+            </div>
         </div>
     </footer>
 

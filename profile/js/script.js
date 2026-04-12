@@ -28,12 +28,11 @@ function populateContent() {
     
     // Populate contact info with email and social media
     const contactInfo = document.getElementById('contact-info');
-    const emailLink = `<a href="mailto:${portfolioData.personal.email}">📧 ${portfolioData.personal.email}</a>`;
     const socialLinks = portfolioData.personal.socialMedia.map(social => 
-        `<a href="${social.url}" target="_blank" rel="noopener noreferrer">${social.icon} ${social.platform}</a>`
+        `<a href="${social.url}" target="_blank" rel="noopener noreferrer">${social.platform}</a>`
     ).join('');
     
-    contactInfo.innerHTML = emailLink + socialLinks;
+    contactInfo.innerHTML = socialLinks;
 
     // Populate navigation
     const navigation = document.getElementById('navigation');
@@ -42,7 +41,16 @@ function populateContent() {
     ).join('');
 
     // Populate summary
-    document.getElementById('summary-text').textContent = portfolioData.summary;
+    const summary = portfolioData.summary;
+    document.getElementById('summary-tagline').textContent = summary.tagline;
+    document.getElementById('summary-text').textContent = summary.description;
+    const metricsContainer = document.getElementById('summary-metrics');
+    metricsContainer.innerHTML = summary.metrics.map(m => `
+        <div class="summary-metric">
+            <span class="metric-value">${m.value}</span>
+            <span class="metric-label">${m.label}</span>
+        </div>
+    `).join('');
 
     // Populate skills
     const skillsGrid = document.getElementById('skills-grid');
@@ -61,62 +69,76 @@ function populateContent() {
     const projectsGrid = document.getElementById('projects-grid');
     projectsGrid.innerHTML = portfolioData.projects.map(project => `
         <div class="project-card">
-            <div class="project-header">
-                <div class="project-icon">${project.icon}</div>
-                <div class="project-title-section">
-                    <h3 class="project-title">${project.title}</h3>
-                    <div class="project-status ${project.status.toLowerCase()}">${project.status}</div>
+            ${project.image ? `
+            <div class="project-screenshot">
+                <img src="${project.image}" alt="${project.title} screenshot" loading="lazy">
+                <div class="screenshot-overlay"></div>
+            </div>` : ''}
+            <div class="project-body">
+                <div class="project-header">
+                    <div class="project-icon">${project.icon}</div>
+                    <div class="project-title-section">
+                        <h3 class="project-title">${project.title}</h3>
+                        <div class="project-status ${project.status.toLowerCase()}">${project.status}</div>
+                    </div>
                 </div>
-            </div>
-            <p class="project-description">${project.description}</p>
-            <div class="project-technologies">
-                ${project.technologies.map(tech => 
-                    `<span class="tech-tag">${tech}</span>`
-                ).join('')}
-            </div>
-            <div class="project-highlights">
-                <h4>Key Features:</h4>
-                <ul>
-                    ${project.highlights.map(highlight => 
-                        `<li>${highlight}</li>`
+                <p class="project-description">${project.description}</p>
+                <div class="project-technologies">
+                    ${project.technologies.map(tech => 
+                        `<span class="tech-tag">${tech}</span>`
                     ).join('')}
-                </ul>
-            </div>
-            <div class="project-actions">
-                <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-link">
-                    🔗 Visit Project
-                </a>
+                </div>
+                <div class="project-highlights">
+                    <h4>Key Features:</h4>
+                    <ul>
+                        ${project.highlights.map(highlight => 
+                            `<li>${highlight}</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+                <div class="project-actions">
+                    <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="project-link">
+                        Try It Live →
+                    </a>
+                </div>
             </div>
         </div>
     `).join('') + `
         <div class="project-card">
-            <div class="project-header">
-                <div class="project-icon">🔍</div>
-                <div class="project-title-section">
-                    <h3 class="project-title">Tiny HTTP/S Logger</h3>
-                    <div class="project-status published">Published</div>
+            <div class="project-screenshot">
+                <img src="public/images/WebFirewall.png" alt="Web Firewall screenshot" loading="lazy">
+                <div class="screenshot-overlay"></div>
+            </div>
+            <div class="project-body">
+
+                <div class="project-header">
+                    <div class="project-icon">🛡️</div>
+                    <div class="project-title-section">
+                        <h3 class="project-title">Web Firewall</h3>
+                        <div class="project-status published">Published</div>
+                    </div>
                 </div>
-            </div>
-            <p class="project-description">Lightweight Chrome extension to capture and inspect HTTP/S requests for quick debugging, telemetry and audit. Published on the Chrome Web Store.</p>
-            <div class="project-technologies">
-                <span class="tech-tag">JavaScript</span>
-                <span class="tech-tag">Chrome Extensions API</span>
-                <span class="tech-tag">Manifest V3</span>
-                <span class="tech-tag">Web Development</span>
-            </div>
-            <div class="project-highlights">
-                <h4>Key Features:</h4>
-                <ul>
-                    <li>Real-time HTTP/HTTPS request monitoring</li>
-                    <li>Lightweight and minimal performance impact</li>
-                    <li>Easy-to-use interface for quick debugging</li>
-                    <li>Published and available on Chrome Web Store</li>
-                </ul>
-            </div>
-            <div class="project-actions">
-                <a href="https://chromewebstore.google.com/detail/tiny-https-logger/gkmfcfbbcibgaifekjmdimhnnpflablc?authuser=0&hl=en" target="_blank" rel="noopener noreferrer" class="project-link">
-                    🔗 Visit Project
-                </a>
+                <p class="project-description">Advanced Chrome extension that provides real-time protection against XSS, SQL injection, malicious scripts, and tracking — with multi-level security modes and a live telemetry dashboard.</p>
+                <div class="project-technologies">
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Chrome Extensions API</span>
+                    <span class="tech-tag">Manifest V3</span>
+                    <span class="tech-tag">Declarative Net Request</span>
+                </div>
+                <div class="project-highlights">
+                    <h4>Key Features:</h4>
+                    <ul>
+                        <li>Multi-level security: Balanced, Maximum, and Custom rule modes</li>
+                        <li>XSS, SQL injection, and malicious script blocking</li>
+                        <li>Live telemetry dashboard with export (JSON/CSV)</li>
+                        <li>JSON-based custom rules for power users</li>
+                    </ul>
+                </div>
+                <div class="project-actions">
+                    <a href="https://chromewebstore.google.com/detail/command-code-web-firewall/mefiifjaoonlidppjkhhchohdgpbbfhn" target="_blank" rel="noopener noreferrer" class="project-link">
+                        Get It Free →
+                    </a>
+                </div>
             </div>
         </div>
     `;
@@ -150,33 +172,46 @@ function populateContent() {
         </div>
     `).join('');
 
-    // Populate AI Contents with break lines between platforms
+    // Populate AI Contents as inline marquee
     const aiContentsSection = document.getElementById('ai-contents-section');
-    const platformLinks = portfolioData.aiContents.platforms.map((platform, index) => {
-        const link = `
-            <a href="${platform.url}" target="_blank" rel="noopener noreferrer" class="ai-platform-link">
-                <span class="platform-icon">${platform.icon}</span>
-                <span class="platform-name">${platform.platform}</span>
-                <span class="platform-handle">Command & Code</span>
-            </a>
-        `;
-        
-        // Add break line after each platform except the last one
-        return index < portfolioData.aiContents.platforms.length - 1 
-            ? link + '<div class="platform-break"></div>' 
-            : link;
-    }).join('');
+    const platformItems = portfolioData.aiContents.platforms.map(platform =>
+        `<a href="${platform.url}" target="_blank" rel="noopener noreferrer" class="ai-platform-link">
+            <span class="platform-icon">${platform.icon}</span>
+            <span class="platform-name">${platform.platform}</span>
+            <span class="platform-handle">Command & Code</span>
+        </a>`
+    ).join('');
 
+    // Duplicate items to create seamless infinite scroll
     aiContentsSection.innerHTML = `
         <div class="ai-contents-content">
             <p class="ai-description">${portfolioData.aiContents.description}</p>
-            <div class="ai-platforms">
-                ${platformLinks}
+            <div class="ai-marquee-wrapper">
+                <div class="ai-marquee-track">
+                    ${platformItems}
+                    ${platformItems}
+                </div>
             </div>
         </div>
     `;
 
+    // Populate Contact section
+    const contactSection = document.getElementById('contact-section');
+    const contactSocials = portfolioData.personal.socialMedia.map(social =>
+        `<a href="${social.url}" target="_blank" rel="noopener noreferrer">${social.platform}</a>`
+    ).join('');
+    contactSection.innerHTML = `
+        <p class="contact-description">Interested in collaborating or have a question? Feel free to reach out.</p>
+        <a href="mailto:${portfolioData.personal.email}" class="contact-email-btn">Get In Touch</a>
+        <div class="contact-socials">${contactSocials}</div>
+    `;
+
     // Populate footer
+    const footerLinks = document.getElementById('footer-links');
+    const navLinks = portfolioData.navigation.map(item =>
+        `<a href="${item.href}">${item.text}</a>`
+    ).join('');
+    footerLinks.innerHTML = navLinks + '<div class="footer-divider"></div>';
     document.getElementById('footer-text').textContent = portfolioData.footer.copyright;
 
     // Initialize animations and interactions after content is loaded
@@ -185,6 +220,25 @@ function populateContent() {
 
 // Initialize all interactions after content is loaded
 function initializeInteractions() {
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navigation = document.getElementById('navigation');
+
+    hamburger.addEventListener('click', function() {
+        this.classList.toggle('active');
+        navigation.classList.toggle('open');
+        this.setAttribute('aria-expanded', navigation.classList.contains('open'));
+    });
+
+    // Close menu when a nav link is clicked (mobile)
+    navigation.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') {
+            hamburger.classList.remove('active');
+            navigation.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
     // Smooth scrolling for navigation links
     document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -215,15 +269,15 @@ function initializeInteractions() {
     window.addEventListener('scroll', function() {
         const nav = document.querySelector('.main-nav');
         if (window.scrollY > 100) {
-            nav.style.background = 'rgba(255,255,255,0.98)';
+            nav.style.background = 'rgba(12, 12, 20, 0.98)';
             nav.style.backdropFilter = 'blur(20px)';
         } else {
-            nav.style.background = '#fff';
-            nav.style.backdropFilter = 'none';
+            nav.style.background = 'rgba(12, 12, 20, 0.95)';
+            nav.style.backdropFilter = 'blur(20px)';
         }
     });
 
-    // Animate elements on scroll
+    // Animate elements on scroll with staggered delays
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -232,17 +286,37 @@ function initializeInteractions() {
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                entry.target.classList.add('visible');
             }
         });
     }, observerOptions);
 
-    // Observe all animatable elements
-    document.querySelectorAll('.skill-category, .job, .education-item, .project-card, .ai-platform-link').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    // Apply reveal class with staggered delays per group
+    const revealGroups = [
+        '.skill-category',
+        '.project-card',
+        '.job',
+        '.education-item',
+        '.summary-metric'
+    ];
+
+    revealGroups.forEach(selector => {
+        document.querySelectorAll(selector).forEach((el, i) => {
+            el.classList.add('reveal');
+            el.style.transitionDelay = `${i * 0.1}s`;
+            observer.observe(el);
+        });
+    });
+
+    // Summary tagline and description fade in
+    document.querySelectorAll('.summary-tagline, .summary-description').forEach(el => {
+        el.classList.add('reveal');
+        observer.observe(el);
+    });
+
+    // Section titles fade in separately
+    document.querySelectorAll('.section-title').forEach(el => {
+        el.classList.add('reveal');
         observer.observe(el);
     });
 }

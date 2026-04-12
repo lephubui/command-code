@@ -33,51 +33,99 @@
   },
   "navigation": [
     { "href": "#summary", "text": "Summary" },
+    { "href": "#products", "text": "Products" },
     { "href": "#skills", "text": "Skills" },
-    { "href": "#projects", "text": "Projects" },
     { "href": "#experience", "text": "Experience" },
     { "href": "#education", "text": "Education" },
-    { "href": "#ai-contents", "text": "AI Contents" }
+    { "href": "#ai-contents", "text": "Contents" },
+    { "href": "#contact", "text": "Contact" }
   ],
-  "summary": "Software Engineering with a robust background in software development and cybersecurity innovation. Specializes in designing scalable, cloud security, real-time embedded system, and real-time distributed system. Proven ability in leveraging interpreted and compiled programming languages to optimize code for software network systems. Demonstrates a commitment to cross-functional collaboration and delivering high-quality, resilient software.",
+  "summary": {
+    "tagline": "Engineer. Builder. Researcher.",
+    "description": "I ship products. Over 10 years of engineering across F5 Networks, SEL Inc, and Tata Consultancy taught me how to build systems that scale, from low-level networking protocols in C++ to cloud-native deployments on AWS. Now I channel that depth into founding AI-powered tools: a cybersecurity training platform, an intelligent diagramming workspace, and a real-time product analysis app, all live, all revenue-ready. I also help small and local businesses bring their ideas to life with modern software solutions.",
+    "metrics": [
+      { "value": "10+", "label": "Years Engineering" },
+      { "value": "3", "label": "AI-Powered Apps" },
+      { "value": "M.S", "label": "Computer Science" }
+    ]
+  },
   "skills": [
     {
       "category": "Programming Languages",
-      "items": ["C++", "C", "Python", "Java", "NodeJS", "C#", "Go", "SQL"]
+      "items": ["C++", "C", "TypeScript", "JavaScript", "Python", "Java", "Go", "C#", "SQL"]
     },
     {
-      "category": "Data Formats & Databases",
-      "items": ["NoSQL", "JSON", "XML", "MongoDB Atlas", "PostgreSQL", "Redis"]
+      "category": "Frontend & Mobile",
+      "items": ["React", "Next.js", "Vite", "Tailwind CSS", "Capacitor (iOS & Android)", "HTML/CSS"]
     },
     {
-      "category": "Networking & Security Tools",
-      "items": ["OS Linux", "Wireshark", "Static Analysis"]
+      "category": "Backend & Databases",
+      "items": ["Node.js", "Express", "Spring Boot", "Flask", "Supabase", "PostgreSQL", "MongoDB", "Redis"]
+    },
+    {
+      "category": "AI & APIs",
+      "items": ["OpenAI API", "Anthropic Claude", "Google Gemini", "Mermaid", "PlantUML", "Stripe", "REST APIs"]
     },
     {
       "category": "Cloud & DevOps",
-      "items": ["AWS", "MS Azure Cloud", "Docker Container", "CI/CD pipelines"]
+      "items": ["AWS", "Azure", "Vercel", "Docker", "CI/CD Pipelines", "Git"]
     },
     {
-      "category": "Software & Tools",
-      "items": ["Git", "Spring framework", "SVN", "Atlassian Jira", "Python Flask", "Postman", "OpenAI API"]
+      "category": "Networking & Security",
+      "items": ["TCP/IP", "SNMP", "LDAP", "TLS/SSL", "Wireshark", "Static Analysis", "Linux"]
     }
   ],
   "projects": [
     {
       "title": "CNC Lab: Network Security Training Platform",
-      "description": "Interactive cybersecurity education platform featuring 5 progressive levels of network security labs. Students learn through hands-on simulations covering basic traffic analysis, firewall configuration, IDS/IPS implementation, and TLS/SSL encryption. Each lab includes guided instructions, real-time attack simulations, and AI-powered assistance for personalized learning.",
+      "description": "Learn cybersecurity by doing. CNC Lab walks students through 10 progressive hands-on labs — from basic traffic analysis to advanced APT simulations — with interactive network topologies, real-time attack scenarios, and an AI assistant that explains what's happening at every step.",
       "url": "https://cclabs.dev",
-      "technologies": ["React", "Vite", "JavaScript", "Network Security", "Educational Technology", "AI Integration"],
+      "technologies": ["React", "Vite", "Express", "MongoDB", "JWT", "Capacitor"],
       "highlights": [
-        "5 progressive security levels: Traffic Analysis → Firewall → IDS → IPS → TLS/SSL",
-        "Interactive network topology with real-time attack simulations",
-        "Built-in AI Assistant for context-aware guidance and explanations",
-        "Real-time logs and feedback system for immediate learning reinforcement",
-        "Progress tracking with browser-based session persistence",
-        "Modern responsive UI built with React and Vite framework"
+        "10 progressive levels: Traffic Analysis → Firewall → IDS/IPS → TLS/SSL → VPN → WAF → SIEM → APT",
+        "Interactive network topology with simulated attacks and defenses",
+        "Built-in AI Assistant providing context-aware explanations and hints",
+        "Embedded quizzes to reinforce learning at each level",
+        "Browser-based progress tracking with session persistence",
+        "Mobile support via Capacitor for learning on the go"
       ],
       "status": "Live",
-      "icon": "🛡️"
+      "icon": "🛡️",
+      "image": "public/images/cclabs.dev.png"
+    },
+    {
+      "title": "Cybewave Studio: AI Diagram & Presentation Workspace",
+      "description": "Skip the blank canvas. Cybewave Studio runs a guided AI interview to understand your project, then generates production-ready Architecture, Sequence, ER, and Component diagrams in one click. Refine with natural language, export animated presentations, and share — all from a single workspace.",
+      "url": "https://cybewave.io",
+      "technologies": ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "OpenAI", "Claude", "Gemini", "Stripe"],
+      "highlights": [
+        "Guided AI discovery that extracts requirements in 3–5 structured phases",
+        "One-click generation of 4 diagram types (Architecture, Sequence, ER, Component)",
+        "Natural language refinement — describe changes, AI updates the diagram",
+        "Animated presentation export with 11+ slide types and offline HTML",
+        "Cloud persistence with Supabase-backed accounts and session recovery",
+        "In-browser screen recording to capture and share studio sessions"
+      ],
+      "status": "Live",
+      "icon": "📐",
+      "image": "public/images/cybewave.png"
+    },
+    {
+      "title": "Fliro: AI Product Flipping Analyzer",
+      "description": "Point your phone at any product and know if it's worth flipping — instantly. Fliro scans barcodes or takes a text description, cross-references real eBay sold data, calculates platform-specific fees, and delivers a confidence-scored buy or skip recommendation with full profit projections.",
+      "url": "https://fliro.io",
+      "technologies": ["React", "TypeScript", "Vite", "Tailwind CSS", "Supabase", "Gemini AI", "Stripe", "Capacitor"],
+      "highlights": [
+        "Instant profitability analysis powered by Gemini 2.5 Flash",
+        "Barcode scanner for on-the-spot product lookups",
+        "Grounded in real eBay sold-listing data — no guesswork",
+        "Fee breakdown across eBay, Mercari, Poshmark, Facebook Marketplace, and Amazon",
+        "Best-case, expected, and worst-case profit scenario projections",
+        "Native iOS and Android apps with inventory tracking and analytics dashboard"
+      ],
+      "status": "Live",
+      "icon": "💰",
+      "image": "public/images/Fliro.png"
     }
   ],
   "experience": [
@@ -154,6 +202,6 @@
     ]
   },
   "footer": {
-    "copyright": "© 2025 Le Phu Bui"
+    "copyright": "© 2016 - 2026 Le Phu Bui"
   }
 }
