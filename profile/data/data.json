@@ -42,7 +42,7 @@
   ],
   "summary": {
     "tagline": "Engineer. Builder. Researcher.",
-    "description": "I ship products. Over 10 years of engineering across F5 Networks, SEL Inc, and Tata Consultancy taught me how to build systems that scale, from low-level networking protocols in C++ to cloud-native deployments on AWS. Now I channel that depth into founding AI-powered tools: a cybersecurity training platform, an intelligent diagramming workspace, and a real-time product analysis app, all live, all revenue-ready. I also help small and local businesses bring their ideas to life with modern software solutions.",
+    "description": "I ship products. Over 10 years of engineering across F5 Networks, SEL Inc, and Tata Consultancy taught me how to build systems that scale, from low-level networking protocols to cloud-native deployments. Now I channel that depth into founding AI-powered tools: a cybersecurity training platform, an intelligent diagramming workspace, and a real-time product analysis app, all live, all revenue-ready. I also help small and local businesses bring their ideas to life with modern software solutions.",
     "metrics": [
       { "value": "10+", "label": "Years Engineering" },
       { "value": "3", "label": "AI-Powered Apps" },
